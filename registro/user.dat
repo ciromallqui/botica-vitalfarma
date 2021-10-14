@@ -1,0 +1,5 @@
+driver=com.mysql.jdbc.Driver
+url=jdbc:mysql://localhost
+dbname=botica_3
+dbuser=root
+password=
