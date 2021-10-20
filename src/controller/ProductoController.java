@@ -71,6 +71,10 @@ public class ProductoController {
         return productoMapper.obtenerStockProducto(idProducto);
     }
     
+    public int obtenerStockMinimo(String idProducto){
+        return productoMapper.obtenerStockMinimo(idProducto);
+    }
+    
     public int insertarProducto(CProducto p){
         if (this.productoMapper.insertarProducto(p) == 1){
             if (this.productoMapper.insertarProductoFechav(p) == 1){

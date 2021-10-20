@@ -30,10 +30,6 @@ public class Main extends javax.swing.JFrame {
         l.setVisible(true);
         l.setLocation(0, -50);
         
-        
-//        control = new Control();
-//        Main.dtpanel.add(control);
-//        control.setVisible(true);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -144,6 +140,7 @@ public class Main extends javax.swing.JFrame {
         minuevoControl.setBackground(new java.awt.Color(255, 102, 0));
         minuevoControl.setForeground(new java.awt.Color(255, 255, 255));
         minuevoControl.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/nuevop.png"))); // NOI18N
+        minuevoControl.setMnemonic('N');
         minuevoControl.setText("Nuevo control              Alt+N");
         minuevoControl.setContentAreaFilled(false);
         minuevoControl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -256,6 +253,7 @@ public class Main extends javax.swing.JFrame {
 
         misalir.setBackground(new java.awt.Color(255, 102, 0));
         misalir.setForeground(new java.awt.Color(255, 255, 255));
+        misalir.setMnemonic('X');
         misalir.setText("        Salir                            Alt+X");
         misalir.setContentAreaFilled(false);
         misalir.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -268,6 +266,11 @@ public class Main extends javax.swing.JFrame {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 misalirMouseExited(evt);
+            }
+        });
+        misalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                misalirActionPerformed(evt);
             }
         });
 
@@ -410,7 +413,7 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(miproducto, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(mipresentacion, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 125, Short.MAX_VALUE))
+                .addGap(0, 10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -431,8 +434,8 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(pmenuBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pmenuRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pmenuArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pmenuArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pmenuRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dtpanel))
         );
@@ -443,7 +446,7 @@ public class Main extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         Icon icono = new ImageIcon(fondo.getImage().getScaledInstance(jLabel2.getWidth(), jLabel2.getHeight(), Image.SCALE_DEFAULT));
         jLabel2.setIcon(icono);
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         this.repaint();
     }//GEN-LAST:event_formWindowOpened
 
@@ -457,9 +460,9 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentResized
 
     private void marchivoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_marchivoMouseEntered
-        pmenuArchivo.setSize(207, 190);
-//        jLabel2.add(pmenuArchivo);
-//        pmenuArchivo.setLocation(0, 0);
+        pmenuArchivo.setSize(207, 225);
+        jLabel2.add(pmenuArchivo);
+        pmenuArchivo.setLocation(0, 0);
         marchivo.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_marchivoMouseEntered
 
@@ -469,7 +472,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_marchivoMouseExited
 
     private void minuevoControlMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_minuevoControlMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         if(minuevoControl.isEnabled()) minuevoControl.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_minuevoControlMouseEntered
@@ -481,7 +484,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_minuevoControlMouseExited
 
     private void miventaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miventaMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         if(miventa.isEnabled()) miventa.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_miventaMouseEntered
@@ -493,7 +496,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_miventaMouseExited
 
     private void mireporteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mireporteMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         mireporte.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_mireporteMouseEntered
@@ -505,7 +508,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_mireporteMouseExited
 
     private void micambioUsuarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_micambioUsuarioMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         micambioUsuario.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_micambioUsuarioMouseEntered
@@ -517,7 +520,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_micambioUsuarioMouseExited
 
     private void jSeparator1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSeparator1MouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_jSeparator1MouseEntered
 
@@ -527,7 +530,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jSeparator1MouseExited
 
     private void jSeparator2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jSeparator2MouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_jSeparator2MouseEntered
 
@@ -537,7 +540,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jSeparator2MouseExited
 
     private void misalirMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_misalirMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         misalir.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_misalirMouseEntered
@@ -549,7 +552,9 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_misalirMouseExited
 
     private void mregistroMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mregistroMouseEntered
-        pmenuRegistro.setSize(207, 190);
+        pmenuRegistro.setSize(207, 80);
+        jLabel2.add(pmenuRegistro);
+        pmenuRegistro.setLocation(96, 0);
         mregistro.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_mregistroMouseEntered
 
@@ -559,7 +564,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_mregistroMouseExited
 
     private void miproductoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_miproductoMouseEntered
-        pmenuRegistro.setSize(207, 190);
+        pmenuRegistro.setSize(207, 80);
         mregistro.setBackground(new java.awt.Color(255,153,51));
         if(miproducto.isEnabled()) miproducto.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_miproductoMouseEntered
@@ -571,7 +576,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_miproductoMouseExited
 
     private void mipresentacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mipresentacionMouseEntered
-        pmenuRegistro.setSize(207, 190);
+        pmenuRegistro.setSize(207, 80);
         mregistro.setBackground(new java.awt.Color(255,153,51));
         mipresentacion.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_mipresentacionMouseEntered
@@ -621,7 +626,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_mireporteActionPerformed
 
     private void midevolucionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_midevolucionMouseEntered
-        pmenuArchivo.setSize(207, 190);
+        pmenuArchivo.setSize(207, 225);
         marchivo.setBackground(new java.awt.Color(255,153,51));
         midevolucion.setBackground(new java.awt.Color(255,153,51));
     }//GEN-LAST:event_midevolucionMouseEntered
@@ -639,8 +644,14 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_midevolucionActionPerformed
 
     private void micambioUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_micambioUsuarioActionPerformed
-        
+        this.dispose();
+        Usuario u = new Usuario(new javax.swing.JFrame(), true);
+        u.setVisible(true);
     }//GEN-LAST:event_micambioUsuarioActionPerformed
+
+    private void misalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_misalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_misalirActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -684,7 +695,7 @@ public class Main extends javax.swing.JFrame {
     public static javax.swing.JLabel lbnombre;
     private javax.swing.JLabel marchivo;
     private javax.swing.JButton micambioUsuario;
-    private javax.swing.JButton midevolucion;
+    public static javax.swing.JButton midevolucion;
     public static javax.swing.JButton minuevoControl;
     private javax.swing.JButton mipresentacion;
     public static javax.swing.JButton miproducto;

@@ -21,14 +21,14 @@ public class VentaMapper {
     public int insertarVenta(CVenta v){
         try {
             st = cn.createStatement();
-            return st.executeUpdate("INSERT INTO t_venta (id_venta,id_usuario,id_turno,monto_total,fecha_venta) VALUES(null,"+v.getIdUsuario()+","+v.getIdTurno()+","+v.getMontoTotal()+",'"+v.getFechaVenta()+"');");
+            return st.executeUpdate("INSERT INTO t_venta (id_venta,id_usuario,id_turno,monto_total,fecha_venta,estado) VALUES(null,"+v.getIdUsuario()+","+v.getIdTurno()+","+v.getMontoTotal()+",'"+v.getFechaVenta()+"','1');");
         } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
     }
     
     public void insertarDetalleVenta(CVenta v){
         try {
             st = cn.createStatement();
-            st.executeUpdate("INSERT INTO t_venta_detalle (id_venta_detalle,id_venta,id_producto_fechav,cantidad_producto,monto,descuento,precio_compra_unitario) VALUES(null,"+v.getIdVenta()+","+v.getIdProductoFechav()+","+v.getCantidadProducto()+","+v.getMonto()+","+v.getDescuento()+","+v.getPrecioCompraUnitario()+");");
+            st.executeUpdate("INSERT INTO t_venta_detalle (id_venta_detalle,id_venta,id_producto_fechav,cantidad_producto,monto,descuento,precio_compra_unitario,estado) VALUES(null,"+v.getIdVenta()+","+v.getIdProductoFechav()+","+v.getCantidadProducto()+","+v.getMonto()+","+v.getDescuento()+","+v.getPrecioCompraUnitario()+",'1');");
             st.executeUpdate("UPDATE t_producto_fechav SET stock_actual=stock_actual-"+v.getCantidadProducto()+", precio_compra_total=precio_compra_total-(precio_compra_unitario*"+v.getCantidadProducto()+") WHERE id_producto_fechav="+v.getIdProductoFechav());
         } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
     }
@@ -73,7 +73,7 @@ public class VentaMapper {
                    .concat("INNER JOIN t_venta_detalle vd ON vd.id_producto_fechav = pf.id_producto_fechav ")
                    .concat("INNER JOIN t_venta v ON v.id_venta = vd.id_venta ")
                    .concat("WHERE vd.estado <> 2 AND p.nombre LIKE '%"+nompreProducto+"%' ")
-//                   .concat("AND (DATE(v.fecha_venta) = DATE(NOW()) OR DATE(v.fecha_venta) = (DATE(NOW())) - INTERVAL 1 DAY)")
+                   .concat("AND (DATE(v.fecha_venta) = DATE(NOW()) OR DATE(v.fecha_venta) = (DATE(NOW())) - INTERVAL 1 DAY)")
                    .concat("ORDER BY v.fecha_venta ASC;");
             rs = st.executeQuery(query);
             int i=1;

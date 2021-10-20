@@ -10,7 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import view.info.ConfirmDialog;
 import view.info.MessageDialog;
-import view.info.MessageToast;
 
 public class Devolucion extends javax.swing.JInternalFrame {
 
@@ -109,6 +108,24 @@ public class Devolucion extends javax.swing.JInternalFrame {
         setResizable(true);
         setTitle("DEVOLUCIONES");
         setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/devolucion_dinero.png"))); // NOI18N
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameOpened(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(227, 111, 30));
 
@@ -494,6 +511,18 @@ public class Devolucion extends javax.swing.JInternalFrame {
         while(modelo2.getRowCount()>0){modelo2.removeRow(0);}
         ventaController.mostrarDevoluciones(modelo2, txproducto2.getText());
     }//GEN-LAST:event_txproducto2KeyReleased
+
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
+        Main.midevolucion.setEnabled(false);
+        if(!Main.minuevoControl.isEnabled()) Control.pdevolucion.setVisible(false);
+        Main.midevolucion.setForeground(new java.awt.Color(204,204,204));
+    }//GEN-LAST:event_formInternalFrameOpened
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        Main.midevolucion.setEnabled(true);
+        if(!Main.minuevoControl.isEnabled()) Control.pdevolucion.setVisible(true);
+        Main.midevolucion.setForeground(new java.awt.Color(255,255,255));
+    }//GEN-LAST:event_formInternalFrameClosed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

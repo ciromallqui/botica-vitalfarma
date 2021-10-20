@@ -9,10 +9,6 @@ import cross_cuting.TableRowColor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import view.info.ConfirmDialog;
@@ -21,14 +17,14 @@ import view.info.MessageDialog;
 import view.info.MessageToast;
 
 public class Producto extends javax.swing.JInternalFrame {
-    DefaultTableModel modelo;
-    ProductoController productoController;
-    ParametroController parametroController;
-    CProducto producto;
-    ConfirmDialog confirmDialog;
-    MessageDialog messageDialog;
-    InputDialog inputDialog;
-    MessageToast messageToast;
+    public DefaultTableModel modelo;
+    public ProductoController productoController;
+    public ParametroController parametroController;
+    public CProducto producto;
+    public ConfirmDialog confirmDialog;
+    public MessageDialog messageDialog;
+    public InputDialog inputDialog;
+    public MessageToast messageToast;
     
     public Producto() {
         initComponents();
@@ -154,7 +150,7 @@ public class Producto extends javax.swing.JInternalFrame {
         setIconifiable(true);
         setTitle("REGISTRO DE PRODUCTOS");
         setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/producto.png"))); // NOI18N
-        setVisible(true);
+        setVisible(false);
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
@@ -823,13 +819,13 @@ public class Producto extends javax.swing.JInternalFrame {
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
         Main.miproducto.setEnabled(true);
-        Control.pproducto.setVisible(true);
+        if(!Main.minuevoControl.isEnabled()) Control.pproducto.setVisible(true);
         Main.miproducto.setForeground(new java.awt.Color(255,255,255));
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
         Main.miproducto.setEnabled(false);
-        Control.pproducto.setVisible(false);
+        if(!Main.minuevoControl.isEnabled()) Control.pproducto.setVisible(false);
         Main.miproducto.setForeground(new java.awt.Color(204,204,204));
     }//GEN-LAST:event_formInternalFrameOpened
 

@@ -1,18 +1,15 @@
 package view;
 
 import MFC.util.JLibrary.DecimalNumber;
-import com.mxrck.autocompleter.TextAutoCompleter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import MFC.util.JLibrary.Message;
 import aplication_class.CProducto;
 import aplication_class.CUsuario;
 import aplication_class.CVenta;
@@ -20,9 +17,12 @@ import controller.ParametroController;
 import controller.ProductoController;
 import controller.VentaController;
 import cross_cuting.TablaProductRender;
+import cross_cuting.TableHeadCustom;
 import cross_cuting.TableRowColor;
+import javax.swing.table.JTableHeader;
 import view.info.ConfirmDialog;
 import view.info.MessageDialog;
+import view.info.MessageToast;
 
 /**
  * @author CIRO
@@ -36,18 +36,20 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     public ProductoController productoController;
     public VentaController ventaController;
     public ParametroController parametroController;
-    ConfirmDialog confirmDialog;
-    MessageDialog messageDialog;
+    public ConfirmDialog confirmDialog;
+    public MessageDialog messageDialog;
+    public MessageToast messageToast;
     public VentaDetalle() {
         initComponents();
         parametroController = new ParametroController();
         productoController = new ProductoController();
         ventaController = new VentaController();
-        tdetalle.setDefaultRenderer(Object.class, new TableRowColor());
         confirmDialog = new ConfirmDialog(new javax.swing.JFrame(), true);
         messageDialog = new MessageDialog(new javax.swing.JFrame(), true);
+        tproducto.setShowHorizontalLines(true);
         tdetalle.setShowHorizontalLines(true);
         tdetalle.setShowVerticalLines(true);
+        
         Date d = new Date();
         String fecha = d.getDate()+"/"+(d.getMonth()+1)+"/"+(d.getYear()+1900);
         DateTimeFormatter stf = DateTimeFormatter.ofPattern("d/M/yyyy");
@@ -104,7 +106,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             }
         });
         
-        TextAutoCompleter tac = new TextAutoCompleter(txproducto);
+//        TextAutoCompleter tac = new TextAutoCompleter(txproducto);
 //        DProducto.loadProducto(tac);
     }
     private void tableDetalle(){
@@ -112,17 +114,26 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         modelod = new DefaultTableModel(null,titulo){
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column !=0 && column !=3 && column !=5;
+                return column !=0 && column !=1 && column !=3 && column !=5;
             }
         };
         tdetalle.setModel(modelod);
-        tdetalle.getColumnModel().getColumn(0).setPreferredWidth(27);
-        tdetalle.getColumnModel().getColumn(1).setPreferredWidth(300);
-        tdetalle.getColumnModel().getColumn(2).setPreferredWidth(50);
-//        tdetalle.getColumnModel().getColumn(5).setMaxWidth(0);
+        tdetalle.getColumnModel().getColumn(0).setMinWidth(50);
+        tdetalle.getColumnModel().getColumn(0).setMaxWidth(50);
+        tdetalle.getColumnModel().getColumn(2).setMinWidth(80);
+        tdetalle.getColumnModel().getColumn(2).setMaxWidth(80);
+        tdetalle.getColumnModel().getColumn(3).setMinWidth(90);
+        tdetalle.getColumnModel().getColumn(3).setMaxWidth(90);
+        tdetalle.getColumnModel().getColumn(4).setMinWidth(120);
+        tdetalle.getColumnModel().getColumn(4).setMaxWidth(120);
+        tdetalle.getColumnModel().getColumn(5).setMaxWidth(0);
+        tdetalle.setDefaultRenderer(Object.class, new TableRowColor());
+        JTableHeader head = tdetalle.getTableHeader();
+        head.setDefaultRenderer(new TableHeadCustom());
+        tdetalle.setTableHeader(head);
     }
     private void tableProducto(){
-        String titulop[] = {"N°","Código","Medicamento","Fecha vencimiento","Precio unitario","Stock"};
+        String titulop[] = {"N°","Código","Producto","Fecha venc.","Precio unit.","Stock"};
         modelop = new DefaultTableModel(null,titulop){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -130,8 +141,6 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             }
         };
         tproducto.setModel(modelop);
-        tproducto.setDefaultRenderer(Object.class, new TableRowColor());
-        productoController.mostrarProducto(modelop, "");
         tproducto.getColumnModel().getColumn(0).setMaxWidth(60);
         tproducto.getColumnModel().getColumn(1).setMaxWidth(80);
         tproducto.getColumnModel().getColumn(3).setMinWidth(120);
@@ -139,6 +148,12 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         tproducto.getColumnModel().getColumn(4).setMinWidth(120);
         tproducto.getColumnModel().getColumn(4).setMaxWidth(120);
         tproducto.getColumnModel().getColumn(5).setMaxWidth(80);
+        
+        tproducto.setDefaultRenderer(Object.class, new TableRowColor());
+        productoController.mostrarProducto(modelop, "");
+        JTableHeader head = tproducto.getTableHeader();
+        head.setDefaultRenderer(new TableHeadCustom());
+        tproducto.setTableHeader(head);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -178,14 +193,17 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         lbvuelto = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jPanel3 = new javax.swing.JPanel();
+        bnuevo = new javax.swing.JButton();
         beliminar = new javax.swing.JButton();
         bguardar = new javax.swing.JButton();
-        bnuevo = new javax.swing.JButton();
 
+        eliminar.setBackground(new java.awt.Color(227, 111, 30));
+        eliminar.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         eliminar.setMnemonic('X');
         eliminar.setText("ELIMINAR");
         eliminar.setToolTipText("");
+        eliminar.setIconTextGap(0);
+        eliminar.setOpaque(true);
         eliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 eliminarActionPerformed(evt);
@@ -193,7 +211,10 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         });
         jPopupMenu1.add(eliminar);
 
+        exportar.setBackground(new java.awt.Color(227, 111, 30));
+        exportar.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         exportar.setText("EXPORTAR");
+        exportar.setOpaque(true);
         exportar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportarActionPerformed(evt);
@@ -202,6 +223,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         jPopupMenu2.add(exportar);
 
         PRODUCTO.setMinimumSize(new java.awt.Dimension(860, 523));
+        PRODUCTO.setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(227, 111, 30));
 
@@ -217,6 +239,8 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             }
         ));
         tproducto.setComponentPopupMenu(jPopupMenu2);
+        tproducto.setGridColor(new java.awt.Color(204, 204, 204));
+        tproducto.setRowHeight(25);
         tproducto.getTableHeader().setReorderingAllowed(false);
         tproducto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -247,9 +271,12 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         txdescripcion.setEditable(false);
         jScrollPane3.setViewportView(txdescripcion);
 
-        bexportar.setBackground(new java.awt.Color(0, 153, 153));
+        bexportar.setBackground(new java.awt.Color(227, 111, 30));
         bexportar.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        bexportar.setText("EXPORTAR");
+        bexportar.setForeground(new java.awt.Color(204, 204, 204));
+        bexportar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/exportar.png"))); // NOI18N
+        bexportar.setText(" EXPORTAR");
+        bexportar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 2, true));
         bexportar.setContentAreaFilled(false);
         bexportar.setEnabled(false);
         bexportar.setOpaque(true);
@@ -268,9 +295,12 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(244, 178, 35));
-        jLabel2.setText("Ingresar nombre del medicamento:");
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("Ingresar el nombre del producto:");
 
+        txCantidadProducto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txCantidadProducto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txCantidadProducto.setText("10");
         txCantidadProducto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txCantidadProductoKeyTyped(evt);
@@ -291,17 +321,17 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(cbcategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bexportar))
+                        .addComponent(txCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(bexportar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2)
                     .addComponent(jScrollPane3))
                 .addContainerGap())
@@ -311,20 +341,21 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbcategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbcategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bexportar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txCantidadProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)))
-                .addGap(10, 10, 10))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txCantidadProducto, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(bexportar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(17, 17, 17))
         );
 
         javax.swing.GroupLayout PRODUCTOLayout = new javax.swing.GroupLayout(PRODUCTO.getContentPane());
@@ -363,12 +394,14 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
 
         jPanel1.setBackground(new java.awt.Color(227, 111, 30));
 
-        bbuscar.setBackground(new java.awt.Color(244, 178, 35));
+        bbuscar.setBackground(new java.awt.Color(227, 111, 30));
         bbuscar.setFont(new java.awt.Font("MS Reference Sans Serif", 1, 12)); // NOI18N
         bbuscar.setForeground(new java.awt.Color(255, 255, 255));
+        bbuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/buscar_boton.png"))); // NOI18N
         bbuscar.setMnemonic('B');
-        bbuscar.setText("BUSCAR PRODUCTO");
+        bbuscar.setText("BUSCAR");
         bbuscar.setToolTipText("Precione Alt + B");
+        bbuscar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 2, true));
         bbuscar.setContentAreaFilled(false);
         bbuscar.setMargin(new java.awt.Insets(2, 4, 2, 4));
         bbuscar.setOpaque(true);
@@ -392,10 +425,6 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
             },
             new String [] {
@@ -412,8 +441,9 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         });
         tdetalle.setToolTipText("Para realizar cualquier ingreso, dar doble click en la casilla requerida");
         tdetalle.setComponentPopupMenu(jPopupMenu1);
-        tdetalle.setGridColor(new java.awt.Color(153, 153, 153));
-        tdetalle.setRowHeight(22);
+        tdetalle.setGridColor(new java.awt.Color(204, 204, 204));
+        tdetalle.setRowHeight(25);
+        tdetalle.setShowVerticalLines(false);
         tdetalle.getTableHeader().setReorderingAllowed(false);
         tdetalle.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -426,24 +456,22 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(tdetalle);
         tdetalle.getAccessibleContext().setAccessibleDescription("");
 
-        lbfecha.setFont(new java.awt.Font("Lucida Calligraphy", 1, 20)); // NOI18N
-        lbfecha.setForeground(new java.awt.Color(255, 204, 51));
+        lbfecha.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        lbfecha.setForeground(new java.awt.Color(255, 255, 255));
         lbfecha.setText("19 de Julio del 2018");
 
+        jLabel7.setBackground(new java.awt.Color(244, 178, 35));
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(244, 178, 35));
-        jLabel7.setText(" Monto total:");
-        jLabel7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText(" Monto total: ");
+        jLabel7.setOpaque(true);
 
-        jPanel6.setBackground(new java.awt.Color(244, 178, 35));
-        jPanel6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
 
         lbmonto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lbmonto.setForeground(new java.awt.Color(255, 51, 0));
         lbmonto.setText("0.00");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 51, 0));
         jLabel8.setText("S/. ");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -463,22 +491,19 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jLabel14.setBackground(new java.awt.Color(244, 178, 35));
         jLabel14.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(244, 178, 35));
-        jLabel14.setText(" Paga Con: ");
-        jLabel14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel14.setText(" Pagó Con: ");
+        jLabel14.setOpaque(true);
 
-        jPanel8.setBackground(new java.awt.Color(244, 178, 35));
-        jPanel8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel8.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel18.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel18.setForeground(new java.awt.Color(255, 51, 0));
         jLabel18.setText("S/.");
 
-        txefectivo.setBackground(new java.awt.Color(244, 178, 35));
         txefectivo.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txefectivo.setForeground(new java.awt.Color(255, 51, 0));
-        txefectivo.setText("0.00");
+        txefectivo.setText("0");
         txefectivo.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txefectivoMouseClicked(evt);
@@ -487,6 +512,9 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         txefectivo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txefectivoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txefectivoKeyTyped(evt);
             }
         });
 
@@ -502,24 +530,22 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(txefectivo)
+            .addComponent(txefectivo, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
             .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jLabel17.setBackground(new java.awt.Color(244, 178, 35));
         jLabel17.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(244, 178, 35));
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
         jLabel17.setText(" Vuelto: ");
-        jLabel17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel17.setOpaque(true);
 
-        jPanel9.setBackground(new java.awt.Color(244, 178, 35));
-        jPanel9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel9.setBackground(new java.awt.Color(255, 255, 255));
 
         lbvuelto.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lbvuelto.setForeground(new java.awt.Color(255, 51, 0));
         lbvuelto.setText("0.00");
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel20.setForeground(new java.awt.Color(255, 51, 0));
         jLabel20.setText("S/. ");
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
@@ -534,19 +560,43 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(lbvuelto, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-                .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(lbvuelto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel3.setBackground(new java.awt.Color(244, 178, 35));
+        bnuevo.setBackground(new java.awt.Color(227, 111, 30));
+        bnuevo.setFont(new java.awt.Font("MS Reference Sans Serif", 1, 14)); // NOI18N
+        bnuevo.setForeground(new java.awt.Color(255, 255, 255));
+        bnuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/nuevo-documento.png"))); // NOI18N
+        bnuevo.setMnemonic('N');
+        bnuevo.setText(" NUEVO");
+        bnuevo.setToolTipText("Precione Alt + N");
+        bnuevo.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 2, true));
+        bnuevo.setContentAreaFilled(false);
+        bnuevo.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        bnuevo.setOpaque(true);
+        bnuevo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bnuevoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bnuevoMouseExited(evt);
+            }
+        });
+        bnuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bnuevoActionPerformed(evt);
+            }
+        });
 
         beliminar.setBackground(new java.awt.Color(227, 111, 30));
         beliminar.setFont(new java.awt.Font("MS Reference Sans Serif", 1, 14)); // NOI18N
         beliminar.setForeground(new java.awt.Color(255, 255, 255));
+        beliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/eliminar.png"))); // NOI18N
         beliminar.setMnemonic('E');
-        beliminar.setText("ELIMINAR REGISTRO");
+        beliminar.setText("ELIMINAR");
         beliminar.setToolTipText("Precione Alt + E");
+        beliminar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 2, true));
         beliminar.setContentAreaFilled(false);
         beliminar.setMargin(new java.awt.Insets(2, 4, 2, 4));
         beliminar.setOpaque(true);
@@ -567,9 +617,11 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         bguardar.setBackground(new java.awt.Color(227, 111, 30));
         bguardar.setFont(new java.awt.Font("MS Reference Sans Serif", 1, 14)); // NOI18N
         bguardar.setForeground(new java.awt.Color(255, 255, 255));
+        bguardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/guardar.png"))); // NOI18N
         bguardar.setMnemonic('G');
-        bguardar.setText("GUARDAR VENTA");
+        bguardar.setText(" GUARDAR");
         bguardar.setToolTipText("Precione Alt + G");
+        bguardar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 2, true));
         bguardar.setContentAreaFilled(false);
         bguardar.setMargin(new java.awt.Insets(2, 4, 2, 4));
         bguardar.setOpaque(true);
@@ -587,61 +639,13 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             }
         });
 
-        bnuevo.setBackground(new java.awt.Color(227, 111, 30));
-        bnuevo.setFont(new java.awt.Font("MS Reference Sans Serif", 1, 14)); // NOI18N
-        bnuevo.setForeground(new java.awt.Color(255, 255, 255));
-        bnuevo.setMnemonic('N');
-        bnuevo.setText("NUEVA VENTA");
-        bnuevo.setToolTipText("Precione Alt + N");
-        bnuevo.setContentAreaFilled(false);
-        bnuevo.setMargin(new java.awt.Insets(2, 4, 2, 4));
-        bnuevo.setOpaque(true);
-        bnuevo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bnuevoMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bnuevoMouseExited(evt);
-            }
-        });
-        bnuevo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bnuevoActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(bnuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bguardar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(beliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(bguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(beliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(0, 0, 0)
@@ -654,31 +658,34 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                         .addComponent(jLabel17)
                         .addGap(0, 0, 0)
                         .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(lbfecha))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(lbfecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(189, 189, 189)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(bbuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(bbuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bguardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(beliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbfecha)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(bbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(21, 21, 21)
+                        .addComponent(bbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(bguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(beliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(bnuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -688,7 +695,8 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                     .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbfecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -700,7 +708,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -711,11 +719,11 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_bbuscarMouseEntered
 
     private void bbuscarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bbuscarMouseExited
-        bbuscar.setBackground(new java.awt.Color(244,178,35));
+        bbuscar.setBackground(new java.awt.Color(227,111,30));
     }//GEN-LAST:event_bbuscarMouseExited
 
     private void bguardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bguardarMouseEntered
-        if(bguardar.isEnabled()) bguardar.setBackground(new java.awt.Color(255,102,0));
+        if(bguardar.isEnabled()) bguardar.setBackground(new java.awt.Color(255,153,0));
     }//GEN-LAST:event_bguardarMouseEntered
 
     private void bguardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bguardarMouseExited
@@ -723,7 +731,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_bguardarMouseExited
 
     private void bnuevoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bnuevoMouseEntered
-        bnuevo.setBackground(new java.awt.Color(255,102,0));
+        bnuevo.setBackground(new java.awt.Color(255,153,0));
     }//GEN-LAST:event_bnuevoMouseEntered
 
     private void bnuevoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bnuevoMouseExited
@@ -731,7 +739,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_bnuevoMouseExited
 
     private void beliminarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_beliminarMouseEntered
-        if(beliminar.isEnabled()) beliminar.setBackground(new java.awt.Color(255,102,0));
+        if(beliminar.isEnabled()) beliminar.setBackground(new java.awt.Color(255,153,0));
     }//GEN-LAST:event_beliminarMouseEntered
 
     private void beliminarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_beliminarMouseExited
@@ -750,42 +758,43 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
         Main.miventa.setEnabled(false);
-        Control.pnuevaVenta.setVisible(false);
+        if(!Main.minuevoControl.isEnabled()) Control.pnuevaVenta.setVisible(false);
         Main.miventa.setForeground(new java.awt.Color(204,204,204));
     }//GEN-LAST:event_formInternalFrameOpened
 
     private void tdetalleKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tdetalleKeyReleased
         try{
-            if(modelod.getValueAt(tdetalle.getSelectedRow(), 4).toString().length()==0){
-               modelod.setValueAt("0.00",tdetalle.getSelectedRow(), 4); 
-            }
-            if(evt.getKeyChar()==KeyEvent.VK_ENTER){
-                if(tdetalle.getSelectedColumn()==2){
-                    String filtro[] = modelod.getValueAt(tdetalle.getSelectedRow(), 5).toString().split(",");
-                    CProducto producto = productoController.consultarProducto(filtro[0], filtro[1]);
-                        
-                    int stock = producto.getStockActual();
-                    double precio = producto.getPrecioVentaUnitario();
-                    if(modelod.getValueAt(tdetalle.getSelectedRow(), 2).toString().length()==0){
-                        modelod.setValueAt(1, tdetalle.getSelectedRow(), 2);
-                    }
-                    int cantidad = Integer.parseInt(modelod.getValueAt(tdetalle.getSelectedRow(), 2).toString());
-                    if(cantidad <= stock){
-                        modelod.setValueAt(DecimalNumber.ReduceDecimal(cantidad*precio,2), tdetalle.getSelectedRow(), 3);
-                    }else{
-                        JOptionPane.showMessageDialog(rootPane, "La cantidad ingresado es mayor que el stock del producto");
-                        modelod.setValueAt(stock, tdetalle.getSelectedRow(), 2);
-                        modelod.setValueAt(DecimalNumber.ReduceDecimal(stock*precio,2), tdetalle.getSelectedRow(), 3);
-                    }
+            if(modelod.getRowCount() > 0){
+                if(modelod.getValueAt(tdetalle.getSelectedRow(), 4).toString().length()==0){
+                   modelod.setValueAt("0.00",tdetalle.getSelectedRow(), 4); 
                 }
-                double monto=0.00, descuento=0.00;
-                for (int i = 0; i < modelod.getRowCount(); i++) {
-                    monto = monto + Double.parseDouble(modelod.getValueAt(i, 3).toString());
-                    descuento = descuento + Double.parseDouble(modelod.getValueAt(i, 4).toString());
+                if(evt.getKeyChar()==KeyEvent.VK_ENTER){
+                    if(tdetalle.getSelectedColumn()==2){
+                        String filtro[] = modelod.getValueAt(tdetalle.getSelectedRow(), 5).toString().split(",");
+                        CProducto producto = productoController.consultarProducto(filtro[0], filtro[1]);
+
+                        int stock = producto.getStockActual();
+                        double precio = producto.getPrecioVentaUnitario();
+                        if(modelod.getValueAt(tdetalle.getSelectedRow(), 2).toString().length()==0){
+                            modelod.setValueAt(1, tdetalle.getSelectedRow(), 2);
+                        }
+                        int cantidad = Integer.parseInt(modelod.getValueAt(tdetalle.getSelectedRow(), 2).toString());
+                        if(cantidad <= stock){
+                            modelod.setValueAt(DecimalNumber.ReduceDecimal(cantidad*precio,2), tdetalle.getSelectedRow(), 3);
+                        }else{ messageDialog.response("La cantidad ingresada es mayor que el stock del producto", 4);
+                            modelod.setValueAt(stock, tdetalle.getSelectedRow(), 2);
+                            modelod.setValueAt(DecimalNumber.ReduceDecimal(stock*precio,2), tdetalle.getSelectedRow(), 3);
+                        }
+                    }
+                    double monto=0.00, descuento=0.00;
+                    for (int i = 0; i < modelod.getRowCount(); i++) {
+                        monto = monto + Double.parseDouble(modelod.getValueAt(i, 3).toString());
+                        descuento = descuento + Double.parseDouble(modelod.getValueAt(i, 4).toString());
+                    }
+                    lbmonto.setText(String.valueOf(DecimalNumber.ReduceDecimal(monto-descuento, 2)));
                 }
-                lbmonto.setText(String.valueOf(DecimalNumber.ReduceDecimal(monto-descuento, 2)));
             }
-        }catch(NullPointerException | NumberFormatException ex){}
+        }catch(NullPointerException | NumberFormatException | java.lang.ArrayIndexOutOfBoundsException ex){}
     }//GEN-LAST:event_tdetalleKeyReleased
 
     private void tdetalleKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tdetalleKeyTyped
@@ -806,7 +815,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
 
     private void txefectivoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txefectivoKeyReleased
         if(txefectivo.getText().length()==0){
-            txefectivo.setText("0.00");
+            txefectivo.setText("0");
             lbvuelto.setText("0.00");
             txefectivo.selectAll();
         }else
@@ -814,6 +823,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txefectivoKeyReleased
 
     private void bguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bguardarActionPerformed
+        messageToast = new MessageToast(new javax.swing.JFrame(), true);
         try{
             if(modelod.getRowCount()>0 && !lbmonto.getText().equals("0.00")){
                 Date d = new Date();
@@ -849,8 +859,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                             Control.lbmonto.setText(DecimalNumber.ReduceDecimal(ventaController.ventaDia((d.getYear()+1900)+"-"+(d.getMonth()+1)+"-"+d.getDate()),2)+" S/.");
                         }
                     }
-                    Message m = new Message();
-                    m.Start(this, "Venta realizada exitosamente");
+                    messageToast.response("Venta realizada con éxito", 200, 50, "success");
                     bguardar.setEnabled(false);
                     bbuscar.setEnabled(false);
                     beliminar.setEnabled(false);
@@ -858,15 +867,14 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                     bbuscar.setForeground(new java.awt.Color(204,204,204));
                     beliminar.setForeground(new java.awt.Color(204,204,204));
                 }
-            }else
-                JOptionPane.showMessageDialog(rootPane, "No hay ningún producto agregado para la venta");
-        }catch(NumberFormatException | NullPointerException ex){JOptionPane.showMessageDialog(rootPane, "Venta no registrada\nIngrese los datos correctos");}
+            }else messageDialog.response("No hay ningún producto agregado para la venta", 4);
+        }catch(NumberFormatException | NullPointerException ex){messageDialog.response("Venta no registrada, <br> ingrese los datos correctos", 4);}
     }//GEN-LAST:event_bguardarActionPerformed
 
     private void beliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_beliminarActionPerformed
         try{
             if(tdetalle.getSelectedRowCount()==1){
-                int si = confirmDialog.response("¿Está seguro que desea retirar el medicamento seleccionado?",2);
+                int si = confirmDialog.response("¿Está seguro que desea retirar el producto seleccionado?",2);
                 if(si==1){
                     modelod.removeRow(tdetalle.getSelectedRow());
                     double monto=0.00;
@@ -876,17 +884,16 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                     lbmonto.setText(String.valueOf(DecimalNumber.ReduceDecimal(monto, 2)));
                     for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
                 }
-            }else
-                messageDialog.response("Seleccione el medicamento que desea retirar", 3);
-            }catch(NullPointerException ex){
-                for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
+            }else messageDialog.response("Seleccione el producto que desea retirar", 3);
+        }catch(NullPointerException ex){
+            for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
         }
     }//GEN-LAST:event_beliminarActionPerformed
 
     private void bnuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnuevoActionPerformed
         while(modelod.getRowCount()>0){modelod.removeRow(0);}
         lbmonto.setText("0.00");
-        txefectivo.setText("0.00");
+        txefectivo.setText("0");
         lbvuelto.setText("0.00");
         bguardar.setEnabled(true);
         bbuscar.setEnabled(true);
@@ -899,8 +906,8 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
         try{
             if(tdetalle.getSelectedRowCount()==1){
-                int si=JOptionPane.showConfirmDialog(rootPane, "Está seguro de querer eliminar?", "CONFIRMAR", 0, 3);
-                if(si==0){
+                int si = confirmDialog.response("¿Está seguro que desea retirar el producto seleccionado?",2);
+                if(si==1){
                     modelod.removeRow(tdetalle.getSelectedRow());
                     double monto=0.00;
                     for (int i = 0; i < modelod.getRowCount(); i++) {
@@ -909,23 +916,22 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                     lbmonto.setText(String.valueOf(DecimalNumber.ReduceDecimal(monto, 2)));
                     for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
                 }
-            }else
-                JOptionPane.showMessageDialog(rootPane, "Seleccione la fila que desea eliminar");
-            }catch(NullPointerException ex){
-                for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
+            } else messageDialog.response("Seleccione el producto que desea retirar", 3);
+        }catch(NullPointerException ex){
+            for (int i = 0; i < modelod.getRowCount(); i++) {modelod.setValueAt(i+1, i, 0);}
         }
     }//GEN-LAST:event_eliminarActionPerformed
 
     private void exportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportarActionPerformed
         bexportar.setEnabled(false);
-        if(tproducto.getSelectedRowCount() > 0){
+        if(tproducto.getSelectedRowCount() == 1){
             bexportarActionPerformed(evt);
-        }else{JOptionPane.showMessageDialog(rootPane, "Seleccione un producto");}
+        } else messageDialog.response("Seleccione un producto", 4);
     }//GEN-LAST:event_exportarActionPerformed
 
     private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
         Main.miventa.setEnabled(true);
-        Control.pnuevaVenta.setVisible(true);
+        if(!Main.minuevoControl.isEnabled()) Control.pnuevaVenta.setVisible(true);
         Main.miventa.setForeground(new java.awt.Color(255,255,255));
     }//GEN-LAST:event_formInternalFrameClosing
 
@@ -937,6 +943,8 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             productoController.mostrarProducto(modelop, txbuscar.getText(), cbcategoria.getSelectedItem().toString());
         }
         bexportar.setEnabled(false);
+        bexportar.setForeground(new java.awt.Color(204,204,204));
+        bexportar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204,204,204), 2, true));
     }//GEN-LAST:event_txbuscarKeyReleased
 
     private void txbuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txbuscarMouseClicked
@@ -952,24 +960,20 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             productoController.mostrarProducto(modelop, txbuscar.getText(), cbcategoria.getSelectedItem().toString());
         }
         bexportar.setEnabled(false);
+        bexportar.setForeground(new java.awt.Color(204,204,204));
+        bexportar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204,204,204), 2, true));
         txbuscar.requestFocus();
     }//GEN-LAST:event_cbcategoriaActionPerformed
 
     private void bexportarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bexportarMouseEntered
-        bexportar.setBackground(new java.awt.Color(0, 153, 102));
+        if(bexportar.isEnabled()) bexportar.setBackground(new java.awt.Color(255,153,0));
     }//GEN-LAST:event_bexportarMouseEntered
 
     private void bexportarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bexportarMouseExited
-        bexportar.setBackground(new java.awt.Color(0, 153, 153));
+        bexportar.setBackground(new java.awt.Color(227,111,30));
     }//GEN-LAST:event_bexportarMouseExited
 
     private void bexportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bexportarActionPerformed
-//        Seleccion.setLocationRelativeTo(null);
-//        Seleccion.setVisible(true);
-//        bexportar.setEnabled(false);
-//        txcantidad.setText("1");
-//        txcantidad.requestFocus();
-//        txcantidad.selectAll();
         try{
             int cantidad = Integer.parseInt(txCantidadProducto.getText());
             int stock = Integer.parseInt(modelop.getValueAt(tproducto.getSelectedRow(), 5).toString());
@@ -985,7 +989,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                             if(cantidad<=stock){
                                 modelod.setValueAt(cantidad, i, 2);
                                 modelod.setValueAt(DecimalNumber.ReduceDecimal((Integer.parseInt(modelod.getValueAt(i,2).toString())*Double.parseDouble(modelop.getValueAt(tproducto.getSelectedRow(), 4).toString())),2), i, 3);
-                            }else JOptionPane.showMessageDialog(rootPane, "La cantidad seleccionada es mayor que el stock del producto");
+                            }else messageDialog.response("La cantidad ingresada es mayor que el stock del producto", 4);
                             break;
                         }
                     }
@@ -1005,14 +1009,16 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                 if(cantidad<=stock){
                     PRODUCTO.hide();
                 }
-            }else JOptionPane.showMessageDialog(rootPane, "La cantidad ingresado es mayor que el stock del producto");
-        }catch(NullPointerException ex){JOptionPane.showMessageDialog(rootPane, ex);};
+            }else messageDialog.response("La cantidad ingresada es mayor que el stock del producto", 4);
+        }catch(NullPointerException ex){messageDialog.response(ex.getMessage(), 4);}
     }//GEN-LAST:event_bexportarActionPerformed
 
     private void tproductoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tproductoMouseClicked
         if(tproducto.getSelectedRowCount()==1){
             txdescripcion.setText(productoController.obtenerIndicacionProducto(modelop.getValueAt(tproducto.getSelectedRow(), 1).toString()));
             bexportar.setEnabled(true);
+            bexportar.setForeground(new java.awt.Color(255,255,255));
+            bexportar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255,255,255), 2, true));
             txCantidadProducto.setText("1");
             txCantidadProducto.requestFocus();
             txCantidadProducto.selectAll();
@@ -1027,6 +1033,12 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
             bexportar.doClick();
         }
     }//GEN-LAST:event_txCantidadProductoKeyTyped
+
+    private void txefectivoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txefectivoKeyTyped
+        if(evt.getKeyChar()>'9' || evt.getKeyChar()<'0'){
+            evt.consume();
+        }
+    }//GEN-LAST:event_txefectivoKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1049,7 +1061,6 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;

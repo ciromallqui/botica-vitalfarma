@@ -201,7 +201,7 @@ public class ProductoMapper {
     public int obtenerCantidadProductoDetalle(String idProducto){
         try {
             st = cn.createStatement();
-            rs = st.executeQuery("SELECT COUNT(*) FROM t_producto_fechav WHERE id_producto='"+idProducto+"'");
+            rs = st.executeQuery("SELECT COUNT(*) FROM t_producto_fechav WHERE id_producto='"+idProducto+"';");
             if (rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }else return 0;
@@ -211,7 +211,17 @@ public class ProductoMapper {
     public int obtenerStockProducto(String idProducto){
         try {
             st = cn.createStatement();
-            rs = st.executeQuery("SELECT SUM(stock_actual) FROM t_producto_fechav WHERE estado = 1 AND id_producto='"+idProducto+"'");
+            rs = st.executeQuery("SELECT SUM(stock_actual) FROM t_producto_fechav WHERE estado = 1 AND id_producto='"+idProducto+"';");
+            if (rs.next()){
+                return Integer.parseInt(rs.getString(1));
+            }else return 0;
+        } catch (SQLException ex) {return 0;}
+    }
+    
+    public int obtenerStockMinimo(String idProducto){
+        try {
+            st = cn.createStatement();
+            rs = st.executeQuery("SELECT stock_minimo FROM t_producto WHERE id_producto='"+idProducto+"';");
             if (rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }else return 0;

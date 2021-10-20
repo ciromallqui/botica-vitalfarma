@@ -118,7 +118,7 @@ public final class MessageToast extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MessageToast dialog = new MessageToast(new javax.swing.JFrame(), true);
-                dialog.response("El producto ha sido duplicado", 230, 50, "warning");
+                dialog.response("Venta realizada con éxito", 200, 50, "warning");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

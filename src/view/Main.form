@@ -43,8 +43,8 @@
               <Component id="pmenuBar" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="pmenuRegistro" min="-2" max="-2" attributes="0"/>
                   <Component id="pmenuArchivo" min="-2" max="-2" attributes="0"/>
+                  <Component id="pmenuRegistro" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="dtpanel" max="32767" attributes="0"/>
@@ -226,6 +226,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Image/nuevop.png"/>
             </Property>
+            <Property name="mnemonic" type="int" value="78"/>
             <Property name="text" type="java.lang.String" value="Nuevo control              Alt+N"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
@@ -356,6 +357,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
+            <Property name="mnemonic" type="int" value="88"/>
             <Property name="text" type="java.lang.String" value="        Salir                            Alt+X"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
@@ -368,6 +370,7 @@
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="misalirMouseEntered"/>
             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="misalirMouseExited"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="misalirActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="midevolucion">
@@ -398,6 +401,9 @@
             <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="midevolucionMouseExited"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="midevolucionActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -449,7 +455,7 @@
                   <Component id="miproducto" min="-2" pref="35" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Component id="mipresentacion" min="-2" pref="35" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="125" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="10" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

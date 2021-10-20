@@ -1,6 +1,8 @@
 package controller;
 
+import aplication_class.CReporteMonto;
 import aplication_class.CReporteSolicitud;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import model.ReporteMapper;
 
@@ -17,5 +19,17 @@ public class ReporteController {
     
     public void listarReporteGeneral(DefaultTableModel model, CReporteSolicitud solicitud){
         reporteMapper.listarReporteGeneral(model, solicitud);
+    }
+    
+    public List<CReporteMonto> listaMontoDiario(CReporteSolicitud solicitud, String tipoReporte){
+        switch(tipoReporte){
+            case "D":
+                return reporteMapper.listaMontoDiario(solicitud);
+            case "M":
+                return reporteMapper.listaMontoMensual(solicitud);
+            case "G":
+                return reporteMapper.listaMontoGeneral(solicitud);
+            default: return reporteMapper.listaMontoDiario(solicitud);
+        }
     }
 }
