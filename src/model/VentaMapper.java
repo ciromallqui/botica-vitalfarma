@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import view.Main;
 
 public class VentaMapper {
     private Statement st;
@@ -15,14 +16,19 @@ public class VentaMapper {
     private Connection cn;
     
     public VentaMapper(){
-        cn = Conexion.Conectar();
+        cn = Conexion.conectar();
     }
     
     public int insertarVenta(CVenta v){
+        int res = 0;
         try {
             st = cn.createStatement();
-            return st.executeUpdate("INSERT INTO t_venta (id_venta,id_usuario,id_turno,monto_total,fecha_venta,estado) VALUES(null,"+v.getIdUsuario()+","+v.getIdTurno()+","+v.getMontoTotal()+",'"+v.getFechaVenta()+"','1');");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+            res = st.executeUpdate("INSERT INTO t_venta (id_venta,id_usuario,id_turno,monto_total,fecha_venta,estado) VALUES(null,"+v.getIdUsuario()+","+v.getIdTurno()+","+v.getMontoTotal()+",'"+v.getFechaVenta()+"','1');");
+            return res;
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar venta:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public void insertarDetalleVenta(CVenta v){
@@ -30,7 +36,9 @@ public class VentaMapper {
             st = cn.createStatement();
             st.executeUpdate("INSERT INTO t_venta_detalle (id_venta_detalle,id_venta,id_producto_fechav,cantidad_producto,monto,descuento,precio_compra_unitario,estado) VALUES(null,"+v.getIdVenta()+","+v.getIdProductoFechav()+","+v.getCantidadProducto()+","+v.getMonto()+","+v.getDescuento()+","+v.getPrecioCompraUnitario()+",'1');");
             st.executeUpdate("UPDATE t_producto_fechav SET stock_actual=stock_actual-"+v.getCantidadProducto()+", precio_compra_total=precio_compra_total-(precio_compra_unitario*"+v.getCantidadProducto()+") WHERE id_producto_fechav="+v.getIdProductoFechav());
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= insertar detalles de la venta:\n"+ ex.getMessage());
+        }
     }
     
     public int obtenerUltimoId(){
@@ -40,7 +48,9 @@ public class VentaMapper {
             if(rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }
-        } catch (SQLException ex) {}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener el último identificador de la venta:\n"+ ex.getMessage());
+        }
         return 0;
     }
     
@@ -52,7 +62,9 @@ public class VentaMapper {
             if(rs.next()){
                 venta = rs.getDouble(1);
             }
-        } catch (SQLException ex) {}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar el monto de la venta del día:\n"+ ex.getMessage());
+        }
         return venta;
     }
     
@@ -61,7 +73,9 @@ public class VentaMapper {
         try {
             st = cn.createStatement();
             rs = st.executeQuery("SELECT FN_DEVOLUCION("+d.getIdVenta()+","+d.getIdVentaDetalle()+","+d.getCantidadProducto()+","+d.getMontoDevolucion()+") FROM dual;");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar una devolución del producto:\n"+ ex.getMessage());
+        }
     }
     
     public void mostrarProductoParaDevolucion(DefaultTableModel modelo, String nompreProducto){
@@ -80,7 +94,9 @@ public class VentaMapper {
             while(rs.next()){
                 modelo.addRow(new Object[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)+","+rs.getString(8)});
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos para la devolución:\n"+ ex.getMessage());
+        }
     }
     
     public void mostrarDevoluciones(DefaultTableModel modelo, String nompreProducto){
@@ -97,7 +113,9 @@ public class VentaMapper {
             while(rs.next()){
                 modelo.addRow(new Object[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4)});
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos devueltos:\n"+ ex.getMessage());
+        }
     }
     
     public double obtenerPrecioUnitario(String idProducto){
@@ -107,7 +125,11 @@ public class VentaMapper {
             if(rs.next()){
                 return rs.getDouble(1);
             }
-        } catch (SQLException ex) {}
+            cn.close();
+            st.close();
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener precio untario del producto:\n"+ ex.getMessage());
+        }
         return 0.00;
     }
 }

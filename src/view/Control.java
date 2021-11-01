@@ -2,13 +2,11 @@ package view;
 
 import MFC.util.JLibrary.DecimalNumber;
 import aplication_class.CTurno;
-import controller.ParametroController;
 import controller.ProductoController;
+import controller.TurnoController;
 import controller.VentaController;
-import cross_cuting.Archivos;
 import cross_cuting.TablaProductRender;
 import cross_cuting.TableHeadCustom;
-import cross_cuting.TableRowColor;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,20 +26,20 @@ public class Control extends javax.swing.JInternalFrame {
     public static DefaultTableModel modelo;
     public ProductoController productoController;
     public VentaController ventaController;
-    public static ParametroController parametroController;
+    public static TurnoController turnoController;
     public Control() {
         initComponents();
         productoController = new ProductoController();
         ventaController = new VentaController();
-        parametroController = new ParametroController();
+        turnoController = new TurnoController();
         tabla.setShowHorizontalLines(true);
         tabla.setShowVerticalLines(false);
         txbuscar.requestFocus();
-        Hora h = new Hora(parametroController.horaCambioTurno());
         this.fecha();
         this.table();
         lbitems.setText(modelo.getRowCount()+"");
-        
+        Hora h = new Hora();
+        h.iniciarTurno();
     }
     private void fecha(){
         Date d = new Date();
@@ -77,6 +75,12 @@ public class Control extends javax.swing.JInternalFrame {
         productoController.mostrarControlProducto(modelo, "", "");
         cbpresentacion.addItem("Seleccionar");
         productoController.cargarPresentacion(cbpresentacion);
+    }
+    
+    public void conf(boolean visible){
+        if(isVisible())
+            setVisible(visible);
+        else setVisible(visible);
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -125,6 +129,7 @@ public class Control extends javax.swing.JInternalFrame {
         setTitle("CONTROL PRINCIPAL DE MEDICAMENTOS");
         setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/punto.png"))); // NOI18N
         setMinimumSize(new java.awt.Dimension(800, 200));
+        setVisible(false);
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
@@ -708,9 +713,10 @@ class Hora implements Runnable{
     Thread h1;
     public String canbioTurno = "0";
     javax.swing.JLabel lbhora = new javax.swing.JLabel();
-    public Hora(String canbioTurno){
-        this.canbioTurno = canbioTurno;
+    public Hora(){
         h1 = new Thread(this);
+    }
+    public void iniciarTurno(){
         h1.start();
     }
     @Override
@@ -745,7 +751,7 @@ class Hora implements Runnable{
         try{
             boolean turno = false;
             Date horaActual = formatter.parse(time);
-            List<CTurno> turnoLista = Control.parametroController.obtenerTurno();
+            List<CTurno> turnoLista = Control.turnoController.listarTurno();
             for (int i = 0; i < turnoLista.size(); i++) {
                 Date horaInicial = formatter.parse(turnoLista.get(i).getHoraInicial());
                 Date horaFinal = formatter.parse(turnoLista.get(i).getHoraFinal());

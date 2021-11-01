@@ -4,6 +4,7 @@ public class CTurno {
     private String nombre;
     private String horaInicial;
     private String horaFinal;
+    private String estado;
     
     public CTurno(){}
     public CTurno(CTurno turno){
@@ -43,6 +44,14 @@ public class CTurno {
 
     public void setHoraFinal(String horaFinal) {
         this.horaFinal = horaFinal;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     
 }

@@ -52,7 +52,7 @@ public class TablaProductRender extends DefaultTableCellRenderer{
             if(column==7){
                 componente.setHorizontalAlignment(CENTER);
                 componente.setBackground(Color.WHITE);
-                componente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/semaforo_verde.png")));
+                componente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/semaforo_azul.png")));
             }
         }
         

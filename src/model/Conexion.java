@@ -9,13 +9,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.JOptionPane;
 
 public class Conexion {
     private static Connection con;
     
-    private static void Mostrar(Registros re){
+    private static void mostrar(Registros re){
         String barra = File.separator;
         String ruta = System.getProperty("user.dir")+barra+"registro"+barra;
         File url = new File(ruta+"user.dat");
@@ -29,42 +31,41 @@ public class Conexion {
             re.setDbuser(mostrar.getProperty("dbuser"));
             re.setPassword(mostrar.getProperty("password"));
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex);
         }
     }
     
-    public static Connection Conectar(){
+    public static Connection conectar(){
         Registros re = new Registros();
-        Mostrar(re);
+        mostrar(re);
         try {
             Class.forName(re.getDriver());
             con=DriverManager.getConnection(re.getUrl()+"/"+re.getDbname(), re.getDbuser(), re.getPassword());
         } catch (ClassNotFoundException | SQLException ex) {}
         if(con==null){
             JOptionPane.showMessageDialog(null, "CONECCIÓN NO ESTABLESIDA");
+            System.exit(0);
         }
         return con;
     }
+    
     public static void main(String[] args) throws SQLException {
-        System.err.println(Conectar());
+        System.err.println(conectar());
         con.close();
     }
     
-    public static String[] ConecMySql(){
+    public static List<String> conecMySql(){
         Connection cn;
         Statement st;
         ResultSet rs;
-        String datos[] = new String[10];
+        List<String> datos = new ArrayList<String>();
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            cn=DriverManager.getConnection("jdbc:mysql://localhost/mysql", "root", Validar.ClaveDB());
+            cn=DriverManager.getConnection("jdbc:mysql://localhost/mysql", "root", Validar.claveDB());
             st=cn.createStatement();
             rs=st.executeQuery("SELECT distinct database_name FROM innodb_index_stats");
-            int i=0;
             while(rs.next()){
-                datos[i]=rs.getString(1);i++;
+                datos.add(rs.getString(1));
             }
-            
         } catch (ClassNotFoundException | SQLException | NullPointerException ex) {
             JOptionPane.showMessageDialog(null, ex);
         }

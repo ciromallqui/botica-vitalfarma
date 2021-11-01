@@ -6,7 +6,7 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 public class Validar {
-    public static String NombreDB(){
+    public static String nombreDB(){
         String name="";
         String barra = File.separator;
         String ruta = System.getProperty("user.dir")+barra+"registro"+barra;
@@ -22,7 +22,7 @@ public class Validar {
         return name;
     }
     
-    public static String ClaveDB(){
+    public static String claveDB(){
         String pass="";
         String barra = File.separator;
         String ruta = System.getProperty("user.dir")+barra+"registro"+barra;

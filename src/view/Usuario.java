@@ -1,17 +1,16 @@
 package view;
 
-import controller.LogeoController;
+import controller.UsuarioController;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import view.info.MessageDialog;
 public class Usuario extends javax.swing.JDialog {
-    public LogeoController logeoController;
+    public UsuarioController logeoController;
     private final MessageDialog messageDialog;
     public Usuario(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         messageDialog = new MessageDialog(new javax.swing.JFrame(), true);
-        logeoController = new LogeoController();
+        logeoController = new UsuarioController();
         this.setLocationRelativeTo(null);
         lblogo.requestFocus();
 //        EnlargeWindow ew = new EnlargeWindow(500);
@@ -85,9 +84,9 @@ public class Usuario extends javax.swing.JDialog {
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/account.png"))); // NOI18N
         jLabel5.setOpaque(true);
 
-        txusuario.setFont(new java.awt.Font("Lucida Calligraphy", 1, 14)); // NOI18N
+        txusuario.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         txusuario.setForeground(new java.awt.Color(153, 153, 153));
-        txusuario.setText("Usuario");
+        txusuario.setText("admin");
         txusuario.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txusuarioMouseClicked(evt);
@@ -123,7 +122,7 @@ public class Usuario extends javax.swing.JDialog {
 
         txclave.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         txclave.setForeground(new java.awt.Color(153, 153, 153));
-        txclave.setText("********");
+        txclave.setText("123");
         txclave.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txclaveMouseClicked(evt);
@@ -212,12 +211,12 @@ public class Usuario extends javax.swing.JDialog {
     private void baceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_baceptarActionPerformed
         if(!txusuario.getText().equals("") && !txusuario.getText().equals("Usuario")){
             if(!String.valueOf(txclave.getPassword()).equals("") && !String.valueOf(txclave.getPassword()).equals("********")){
-                boolean confirmar = logeoController.ingresar(txusuario.getText(), new String(txclave.getPassword()));
-                if(confirmar){
+                int confirmar = logeoController.ingresar(txusuario.getText(), new String(txclave.getPassword()));
+                if(confirmar==1){
                     logeoController.getDatosUsuario(txusuario.getText(), new String(txclave.getPassword()));
                     this.dispose();
                     new Main().setVisible(true);
-                } else messageDialog.response("Nombre de usuario o clave es incorrecto, <br> ingrese sus credenciales nuevamente", 4);
+                } else if(confirmar==0) messageDialog.response("Nombre de usuario o clave es incorrecto, <br> ingrese sus credenciales nuevamente", 4);
             } else messageDialog.response("Ingrese su contraseña", 3);
         } else messageDialog.response("Ingrese el usuario", 3);
         
@@ -248,7 +247,7 @@ public class Usuario extends javax.swing.JDialog {
             txusuario.setForeground(new Color(0,0,0));
         }
         if(String.valueOf(txclave.getPassword()).equals("")){
-            txclave.setText("********");
+            txclave.setText("");
             txclave.setForeground(new Color(153,153,153));
         }
     }//GEN-LAST:event_txusuarioMouseClicked
@@ -260,7 +259,7 @@ public class Usuario extends javax.swing.JDialog {
     }//GEN-LAST:event_txclaveKeyReleased
 
     private void txclaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txclaveMouseClicked
-        if(String.valueOf(txclave.getPassword()).equals("********")){
+        if(String.valueOf(txclave.getPassword()).equals("")){
             txclave.setText("");
             txclave.setForeground(new Color(0,0,0));
         }

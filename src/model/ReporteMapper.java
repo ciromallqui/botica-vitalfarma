@@ -4,11 +4,13 @@ import aplication_class.CReporteMonto;
 import aplication_class.CReporteSolicitud;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import view.Main;
 
 public class ReporteMapper {
     private Statement st;
@@ -16,7 +18,7 @@ public class ReporteMapper {
     private final Connection cn;
     
     public ReporteMapper(){
-        cn = Conexion.Conectar();
+        cn = Conexion.conectar();
     }
     
     public void listarReporteDiario(DefaultTableModel model, CReporteSolicitud solicitud){
@@ -42,8 +44,8 @@ public class ReporteMapper {
                 if (turno == null) turno = "Fuera de turno";
                 model.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6).toUpperCase(),turno});
             }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, ex);
+        }catch(SQLException ex){
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Listar reporte diario:\n"+ ex.getMessage());
         }
     }
     
@@ -72,8 +74,8 @@ public class ReporteMapper {
                 if (turno == null) turno = "Fuera de turno";
                 model.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5).toUpperCase(),turno});
             }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, ex);
+        }catch(SQLException ex){
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Listar reporte general:\n"+ ex.getMessage());
         }
     }
     
@@ -103,8 +105,8 @@ public class ReporteMapper {
                 item.setTurno(rs.getString(3));
                 lista.add(item);
             }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, ex);
+        }catch(SQLException ex){
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Listar Monto diario:\n"+ ex.getMessage());
         }
         return lista;
     }
@@ -135,8 +137,8 @@ public class ReporteMapper {
                 item.setTurno(rs.getString(3));
                 lista.add(item);
             }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, ex);
+        }catch(SQLException ex){
+            Main.txlog.setText(Main.txlog.getText() +"\n======= listar monto mensual:\n"+ ex.getMessage());
         }
         return lista;
     }
@@ -166,8 +168,8 @@ public class ReporteMapper {
                 item.setTurno(rs.getString(3));
                 lista.add(item);
             }
-        }catch(Exception ex){
-            JOptionPane.showMessageDialog(null, ex);
+        }catch(SQLException ex){
+            Main.txlog.setText(Main.txlog.getText() +"\n======= listar monto general:\n"+ ex.getMessage());
         }
         return lista;
     }

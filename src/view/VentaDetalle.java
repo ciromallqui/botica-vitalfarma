@@ -13,8 +13,8 @@ import javax.swing.table.TableColumn;
 import aplication_class.CProducto;
 import aplication_class.CUsuario;
 import aplication_class.CVenta;
-import controller.ParametroController;
 import controller.ProductoController;
+import controller.TurnoController;
 import controller.VentaController;
 import cross_cuting.TablaProductRender;
 import cross_cuting.TableHeadCustom;
@@ -24,9 +24,6 @@ import view.info.ConfirmDialog;
 import view.info.MessageDialog;
 import view.info.MessageToast;
 
-/**
- * @author CIRO
- */
 public class VentaDetalle extends javax.swing.JInternalFrame {
     DefaultTableModel modelod;
     DefaultTableModel modelop;
@@ -35,13 +32,13 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     JTextField txunidad;
     public ProductoController productoController;
     public VentaController ventaController;
-    public ParametroController parametroController;
+    public TurnoController turnoController;
     public ConfirmDialog confirmDialog;
     public MessageDialog messageDialog;
     public MessageToast messageToast;
     public VentaDetalle() {
         initComponents();
-        parametroController = new ParametroController();
+        turnoController = new TurnoController();
         productoController = new ProductoController();
         ventaController = new VentaController();
         confirmDialog = new ConfirmDialog(new javax.swing.JFrame(), true);
@@ -126,6 +123,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
         tdetalle.getColumnModel().getColumn(3).setMaxWidth(90);
         tdetalle.getColumnModel().getColumn(4).setMinWidth(120);
         tdetalle.getColumnModel().getColumn(4).setMaxWidth(120);
+        tdetalle.getColumnModel().getColumn(5).setMinWidth(0);
         tdetalle.getColumnModel().getColumn(5).setMaxWidth(0);
         tdetalle.setDefaultRenderer(Object.class, new TableRowColor());
         JTableHeader head = tdetalle.getTableHeader();
@@ -371,7 +369,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setIconifiable(true);
-        setTitle("MÓDULO DE VENTAS");
+        setTitle("ÁREA DE VENTAS");
         setFrameIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/bienes.png"))); // NOI18N
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
@@ -757,9 +755,9 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_bbuscarActionPerformed
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
-        Main.miventa.setEnabled(false);
+        Main.minuevaVenta.setEnabled(false);
         if(!Main.minuevoControl.isEnabled()) Control.pnuevaVenta.setVisible(false);
-        Main.miventa.setForeground(new java.awt.Color(204,204,204));
+        Main.minuevaVenta.setForeground(new java.awt.Color(204,204,204));
     }//GEN-LAST:event_formInternalFrameOpened
 
     private void tdetalleKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tdetalleKeyReleased
@@ -832,7 +830,7 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
                 v.setFechaVenta(fecha);
                 v.setMontoTotal(Double.parseDouble(lbmonto.getText()));
                 v.setIdUsuario(CUsuario.getIdUsuario());
-                v.setIdTurno(parametroController.consultarTurno(Control.lbturno.getText()).getIdTurno());
+                v.setIdTurno(turnoController.consultarTurno(Control.lbturno.getText()).getIdTurno());
                 int idVenta = ventaController.insertarVenta(v);
                 
                 if(idVenta > 0){
@@ -930,9 +928,9 @@ public class VentaDetalle extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_exportarActionPerformed
 
     private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
-        Main.miventa.setEnabled(true);
+        Main.minuevaVenta.setEnabled(true);
         if(!Main.minuevoControl.isEnabled()) Control.pnuevaVenta.setVisible(true);
-        Main.miventa.setForeground(new java.awt.Color(255,255,255));
+        Main.minuevaVenta.setForeground(new java.awt.Color(255,255,255));
     }//GEN-LAST:event_formInternalFrameClosing
 
     private void txbuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txbuscarKeyReleased

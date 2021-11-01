@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import view.Main;
 
 public class ProductoMapper {
     private Statement st;
@@ -16,7 +16,7 @@ public class ProductoMapper {
     private Connection cn;
     
     public ProductoMapper(){
-        cn = Conexion.Conectar();
+        cn = Conexion.conectar();
     }
     
     public void cargarPresentacion(JComboBox cb){
@@ -26,7 +26,9 @@ public class ProductoMapper {
             while(rs.next()){
                 cb.addItem(rs.getString(1));
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Listar presentación en combo:\n"+ ex.getMessage());
+        }
     }
     
     public void cargarPresentacion(TextAutoCompleter tx){
@@ -36,7 +38,9 @@ public class ProductoMapper {
             while(rs.next()){
                 tx.addItem(rs.getString(1));
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= listar presentación para autocompletado:\n"+ ex.getMessage());
+        }
     }
     
     public void mostrarPresentacion(DefaultTableModel modelo, String presentacion){
@@ -47,7 +51,9 @@ public class ProductoMapper {
             while(rs.next()){
                 modelo.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2)});
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar presentación en tabla:\n"+ ex.getMessage());
+        }
     }
     
     public String obtenerIdPresentacion(String presentacion){
@@ -57,7 +63,10 @@ public class ProductoMapper {
             if(rs.next()){
                 return rs.getString(1);
             }
-        } catch (SQLException ex) {return "0";}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener identificador de presentación:\n"+ ex.getMessage());
+            return "0";
+        }
         return "0";
     }
     
@@ -68,7 +77,10 @@ public class ProductoMapper {
             if(rs.next()){
                 return rs.getInt(1);
             }
-        } catch (SQLException ex) {return -1;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Validar la existencia de presentación:\n"+ ex.getMessage());
+            return -1;
+        }
         return -1;
     }
     
@@ -76,21 +88,27 @@ public class ProductoMapper {
         try {
             st = cn.createStatement();
             st.executeUpdate("INSERT INTO t_presentacion VALUES(null,'"+presentacion+"');");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar presentación:\n"+ ex.getMessage());
+        }
     }
     
     public void actualizarPresentacion(String idPresentacion, String presentacion){
         try {
             st = cn.createStatement();
             st.executeUpdate("UPDATE t_presentacion SET descripcion='"+presentacion+"' WHERE id_presentacion='"+idPresentacion+"';");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Actualizar presentación:\n"+ ex.getMessage());
+        }
     }
     
     public void eliminarPresentacion(String idPresentacion){
         try {
             st = cn.createStatement();
             st.executeUpdate("DELETE FROM t_presentacion WHERE id_presentacion='"+idPresentacion+"';");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Eliminar presentación:\n"+ ex.getMessage());
+        }
     }
     
     //PRODUCTO
@@ -110,7 +128,9 @@ public class ProductoMapper {
             while(rs.next()){
                 modelo.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5)});
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos en tabla:\n"+ ex.getMessage());
+        }
     }
     
     public void mostrarControlProducto(DefaultTableModel modelo, String nompreProducto, String presentacion){
@@ -130,7 +150,9 @@ public class ProductoMapper {
             while(rs.next()){
                 modelo.addRow(new Object[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),Double.parseDouble(rs.getString(5)),rs.getString(6)});
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos en la tabla de control principal:\n"+ ex.getMessage());
+        }
     }
     
     public CProducto consultarProducto(String idProducto, String fechaVencimiento){
@@ -156,7 +178,9 @@ public class ProductoMapper {
                 res.setPrecioCompraUnitario(Double.parseDouble(rs.getString(11)));
                 res.setPresentacion(rs.getString(12));
             }
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex);}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Consultar datos de un producto:\n"+ ex.getMessage());
+        }
         return res;
     }
     
@@ -167,35 +191,50 @@ public class ProductoMapper {
             if (rs.next()){
                 return rs.getString(1);
             }else return null;
-        } catch (SQLException ex) {return null;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= obtener indicaciones de un producto:\n"+ ex.getMessage());
+            return null;
+        }
     }
     
     public int insertarProducto(CProducto p){
         try {
             st = cn.createStatement();
             return st.executeUpdate("INSERT INTO t_producto (id_producto,nombre,indicacion,precio_venta_unitario,stock_minimo,id_presentacion) VALUES('"+p.getIdProducto()+"','"+p.getNombre()+"','"+p.getIndicacion()+"',"+p.getPrecioVentaUnitario()+","+p.getStockMinimo()+","+p.getIdPresentacion()+");");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar un nuevo producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int actualizarProducto(CProducto p){
         try {
             st = cn.createStatement();
             return st.executeUpdate("UPDATE t_producto SET nombre='"+p.getNombre()+"',indicacion='"+p.getIndicacion()+"',precio_venta_unitario="+p.getPrecioVentaUnitario()+",stock_minimo="+p.getStockMinimo()+",id_presentacion="+p.getIdPresentacion()+" WHERE id_producto='"+p.getIdProducto()+"';");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Actualizar datos del producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int insertarProductoFechav(CProducto p){
         try {
             st = cn.createStatement();
             return st.executeUpdate("INSERT INTO t_producto_fechav (id_producto_fechav,id_producto,fecha_vencimiento,precio_compra_total,precio_compra_unitario,stock_actual,estado) VALUES(null,'"+p.getIdProducto()+"','"+p.getFechaVencimiento()+"',"+p.getPrecioCompraTotal()+","+p.getPrecioCompraUnitario()+","+p.getStockActual()+",1);");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar producto por fecha de vencimiento:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int actualizarProductoFechav(CProducto p){
         try {
             st = cn.createStatement();
             return st.executeUpdate("UPDATE t_producto_fechav SET fecha_vencimiento='"+p.getFechaVencimiento()+"',precio_compra_total="+p.getPrecioCompraTotal()+",precio_compra_unitario="+p.getPrecioCompraUnitario()+",stock_actual="+p.getStockActual()+" WHERE id_producto_fechav="+p.getIdProductoFechav()+";");
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Actualizar los detalles del prodecto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int obtenerCantidadProductoDetalle(String idProducto){
@@ -205,7 +244,10 @@ public class ProductoMapper {
             if (rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }else return 0;
-        } catch (SQLException ex) {return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener cantidad de items de un producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int obtenerStockProducto(String idProducto){
@@ -215,7 +257,10 @@ public class ProductoMapper {
             if (rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }else return 0;
-        } catch (SQLException ex) {return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener stock del producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int obtenerStockMinimo(String idProducto){
@@ -225,27 +270,39 @@ public class ProductoMapper {
             if (rs.next()){
                 return Integer.parseInt(rs.getString(1));
             }else return 0;
-        } catch (SQLException ex) {return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Obtener el stock mínimo del producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int eliminarProducto(String idProducto){
         try {
             st = cn.createStatement();
             return st.executeUpdate("DELETE FROM t_producto WHERE id_producto="+idProducto);
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Eliminar producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int eliminarProductoFechav(int idProductoFechav){
         try {
             st = cn.createStatement();
             return st.executeUpdate("DELETE FROM t_producto_fechav WHERE id_producto_fechav="+idProductoFechav);
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Eliminar un item del producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
     
     public int actualizarEstadoProductoFechav(int idProductoFechav){
         try {
             st = cn.createStatement();
             return st.executeUpdate("UPDATE t_producto_fechav SET estado = 0 WHERE id_producto_fechav="+idProductoFechav);
-        } catch (SQLException ex) {JOptionPane.showMessageDialog(null, ex); return 0;}
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Actualizar un item del producto:\n"+ ex.getMessage());
+            return 0;
+        }
     }
 }

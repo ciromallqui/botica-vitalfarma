@@ -280,7 +280,7 @@
   <Properties>
     <Property name="closable" type="boolean" value="true"/>
     <Property name="iconifiable" type="boolean" value="true"/>
-    <Property name="title" type="java.lang.String" value="M&#xd3;DULO DE VENTAS"/>
+    <Property name="title" type="java.lang.String" value="&#xc1;REA DE VENTAS"/>
     <Property name="frameIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
       <Image iconType="3" name="/Image/bienes.png"/>
     </Property>

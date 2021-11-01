@@ -12,6 +12,7 @@ public final class MessageToast extends javax.swing.JDialog {
         super(parent, modal);
         tiempoEspera();
         initComponents();
+        setModal(false);
     }
     
     public void response(String message, int width, int height, String color){
@@ -27,7 +28,7 @@ public final class MessageToast extends javax.swing.JDialog {
             default:
                 panel.setBackground(new Color(0,0,255)); break;
         }
-        setLocationRelativeTo(Main.lbnombre);
+        setLocationRelativeTo(Main.lbmessage);
         this.tim.start();
         setVisible(true);
     }
@@ -36,7 +37,7 @@ public final class MessageToast extends javax.swing.JDialog {
         this.al = (evt -> {
               this.tim.stop();
               try {
-                Thread.sleep(4000);
+                Thread.sleep(3000);
               } catch (InterruptedException ex) {}
               dispose();
           });
@@ -118,14 +119,14 @@ public final class MessageToast extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MessageToast dialog = new MessageToast(new javax.swing.JFrame(), true);
-                dialog.response("Venta realizada con éxito", 200, 50, "warning");
+                dialog.response("Datos del turno actualizado con éxito", 270, 50, "warning");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
                 });
-                dialog.setVisible(true);
+//                dialog.setVisible(true);
             }
         });
     }

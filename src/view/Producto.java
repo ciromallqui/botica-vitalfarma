@@ -177,7 +177,6 @@ public class Producto extends javax.swing.JInternalFrame {
         jLabel1.setText("Presentación:");
 
         cbcategoria.setBackground(new java.awt.Color(255, 153, 0));
-        cbcategoria.setEditable(true);
         cbcategoria.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         cbcategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar presentación" }));
         cbcategoria.setInheritsPopupMenu(true);
@@ -631,7 +630,7 @@ public class Producto extends javax.swing.JInternalFrame {
                     productoController.cargarPresentacion(cbcategoria);
                 }
             } else messageToast.response("Ingrese una presentación correcta", 250, 50, "danger");
-        }catch(NullPointerException eX){}
+        }catch(NullPointerException ex){}
         
     }//GEN-LAST:event_bcategoriaActionPerformed
 
@@ -654,10 +653,12 @@ public class Producto extends javax.swing.JInternalFrame {
                 p.setFechaVencimiento(sdf.format(fv));
                 p.setIdPresentacion(productoController.obtenerIdPresentacion(cbcategoria.getSelectedItem().toString()));
                 if (productoController.insertarProducto(p) == 1){
-                    messageToast.response("Datos del producto guardados correctamente", 350, 50, "success");
+                    nuevo();
                     lbcodigo.setText(Codigo.idText("P", 5, parametroController.obtenerContador("CODIGO_PRODUCTO")));
                     while(modelo.getRowCount()!=0){modelo.removeRow(0);}
                     productoController.mostrarProducto(modelo,"");
+                    txnombre.requestFocus(true);
+                    messageToast.response("Datos del producto guardados correctamente", 350, 50, "success");
                 } else messageToast.response("No se pudo registrar el producto", 250, 50, "warning");
             } else messageToast.response("Ingrese nombre del producto", 250, 50, "warning");
         } else messageToast.response("Seleccione una presentación", 250, 50, "warning");
@@ -741,6 +742,7 @@ public class Producto extends javax.swing.JInternalFrame {
     private void mcargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mcargarActionPerformed
         while(modelo.getRowCount()!=0){modelo.removeRow(0);}
         productoController.mostrarProducto(modelo,"");
+        txbuscarp.setText("");
     }//GEN-LAST:event_mcargarActionPerformed
 
     private void beliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_beliminarActionPerformed

@@ -4,6 +4,7 @@ import aplication_class.CReporteSolicitud;
 import controller.ParametroController;
 import controller.ProductoController;
 import controller.ReporteController;
+import controller.TurnoController;
 import cross_cuting.TableHeadCustom;
 import cross_cuting.TableRowColor;
 import java.text.ParseException;
@@ -19,14 +20,14 @@ public class Reporte extends javax.swing.JInternalFrame {
     DefaultTableModel modelo;
     ProductoController productoController;
     ReporteController reporteController;
-    ParametroController parametroController;
+    TurnoController turnoController;
     CReporteSolicitud filtros;
     public static String tipoReporte;
     public Reporte() {
         initComponents();
         productoController = new ProductoController();
         reporteController = new ReporteController();
-        parametroController = new ParametroController();
+        turnoController = new TurnoController();
         filtros = new CReporteSolicitud();
         tipoReporte = "D";
         bmonto3.setOpaque(true);
@@ -45,9 +46,9 @@ public class Reporte extends javax.swing.JInternalFrame {
         SimpleDateFormat sdff = new SimpleDateFormat("yyyy-MM-dd");
         filtros.setFechaVenta(sdff.format(dfecha.getDate()));
         reporteController.listarReporteDiario(modelo, filtros);
-        parametroController.cargarTurno(cbturno1);
-        parametroController.cargarTurno(cbturno2);
-        parametroController.cargarTurno(cbturno3);
+        turnoController.cargarTurno(cbturno1);
+        turnoController.cargarTurno(cbturno2);
+        turnoController.cargarTurno(cbturno3);
         productoController.cargarPresentacion(cbpresentacion1);
         productoController.cargarPresentacion(cbpresentacion2);
         productoController.cargarPresentacion(cbpresentacion3);
