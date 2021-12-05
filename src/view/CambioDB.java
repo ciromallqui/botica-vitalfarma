@@ -211,11 +211,16 @@ public class CambioDB extends javax.swing.JDialog {
             guardar.println("dbname="+cbdb.getSelectedItem().toString());
             guardar.println("dbuser=root");
             guardar.println("password="+clave);
-        } catch (IOException ex) {}
+        } catch (IOException ex) {
+            messageToast = new MessageToast(new javax.swing.JFrame(), true);
+            messageToast.response("El sistema no puede encontrar el archivo de configuración de datos", 250, 80, "danger");
+        }
         try(FileWriter escribirDB = new FileWriter(ruta+"database.dat")){
             PrintWriter guardarDB = new PrintWriter(escribirDB);
             guardarDB.println("dbname="+cbdb.getSelectedItem().toString());
             guardarDB.println("password="+clave);
-        }catch(IOException ex){}
+        }catch(IOException ex){
+            messageToast.response("El sistema no puede encontrar el archivo de configuración de datos", 250, 80, "danger");
+        }
     }
 }

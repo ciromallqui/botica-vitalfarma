@@ -38,8 +38,8 @@ public class RegistroUsuario extends javax.swing.JDialog {
         tabla.getColumnModel().getColumn(0).setMaxWidth(40);
         tabla.getColumnModel().getColumn(3).setMinWidth(150);
         tabla.getColumnModel().getColumn(3).setMaxWidth(150);
-        tabla.getColumnModel().getColumn(4).setMinWidth(0);
-        tabla.getColumnModel().getColumn(4).setMaxWidth(0);
+        tabla.getColumnModel().getColumn(4).setMinWidth(1);
+        tabla.getColumnModel().getColumn(4).setMaxWidth(1);
         tabla.setDefaultRenderer(Object.class, new TableRowColor());
         JTableHeader head = tabla.getTableHeader();
         head.setDefaultRenderer(new TableHeadCustom());

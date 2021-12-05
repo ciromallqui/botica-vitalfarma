@@ -2,6 +2,7 @@ package view;
 
 import MFC.util.JLibrary.DecimalNumber;
 import aplication_class.CTurno;
+import aplication_class.CUsuario;
 import controller.ProductoController;
 import controller.TurnoController;
 import controller.VentaController;
@@ -40,6 +41,10 @@ public class Control extends javax.swing.JInternalFrame {
         lbitems.setText(modelo.getRowCount()+"");
         Hora h = new Hora();
         h.iniciarTurno();
+        
+        if(!CUsuario.getTipoUsuario().equals("ADMINISTRADOR")){
+            pproducto.setVisible(false);
+        }
     }
     private void fecha(){
         Date d = new Date();
@@ -50,8 +55,8 @@ public class Control extends javax.swing.JInternalFrame {
         lbfecha.setText(stf.format(ld));
         lbmonto.setText(DecimalNumber.ReduceDecimal(ventaController.ventaDia((d.getYear()+1900)+"-"+(d.getMonth()+1)+"-"+d.getDate()),2)+" S/.");
     }
-    private void table(){
-        String titulo[] = {"N°","Código","Presentación","Producto","Fecha venc.","Precio Unit.","Stock","E.Stock"};
+    public void table(){
+        String titulo[] = {"","N°","Presentación","Producto","Laboratorio","Fecha de venc.","Precio Unit. S/.","Stock","E.Stock"};
         modelo = new DefaultTableModel(null,titulo){
             @Override
             public boolean isCellEditable(int row, int column){
@@ -59,14 +64,18 @@ public class Control extends javax.swing.JInternalFrame {
             }
         };
         tabla.setModel(modelo);
-        tabla.getColumnModel().getColumn(0).setMaxWidth(60);
-        tabla.getColumnModel().getColumn(1).setMaxWidth(70);
-        tabla.getColumnModel().getColumn(4).setMinWidth(120);
-        tabla.getColumnModel().getColumn(4).setMaxWidth(120);
-        tabla.getColumnModel().getColumn(5).setMinWidth(120);
-        tabla.getColumnModel().getColumn(5).setMaxWidth(120);
-        tabla.getColumnModel().getColumn(6).setMaxWidth(80);
+        tabla.getColumnModel().getColumn(0).setMinWidth(1);
+        tabla.getColumnModel().getColumn(0).setMaxWidth(1);
+        tabla.getColumnModel().getColumn(1).setMinWidth(60);
+        tabla.getColumnModel().getColumn(1).setMaxWidth(60);
+        tabla.getColumnModel().getColumn(5).setMinWidth(130);
+        tabla.getColumnModel().getColumn(5).setMaxWidth(130);
+        tabla.getColumnModel().getColumn(6).setMinWidth(120);
+        tabla.getColumnModel().getColumn(6).setMaxWidth(120);
+        tabla.getColumnModel().getColumn(7).setMinWidth(80);
         tabla.getColumnModel().getColumn(7).setMaxWidth(80);
+        tabla.getColumnModel().getColumn(8).setMinWidth(90);
+        tabla.getColumnModel().getColumn(8).setMaxWidth(90);
         tabla.setDefaultRenderer(Object.class, new TablaProductRender());
         JTableHeader head = tabla.getTableHeader();
         head.setDefaultRenderer(new TableHeadCustom());
@@ -590,6 +599,8 @@ public class Control extends javax.swing.JInternalFrame {
         lbitems.setText(modelo.getRowCount()+"");
         txbuscar.setText(null);
         cbpresentacion.removeItemAt(1);
+        Date d = new Date();
+        lbmonto.setText(DecimalNumber.ReduceDecimal(ventaController.ventaDia((d.getYear()+1900)+"-"+(d.getMonth()+1)+"-"+d.getDate()),2)+" S/.");
     }//GEN-LAST:event_prefrescarMouseClicked
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
@@ -727,7 +738,7 @@ class Hora implements Runnable{
             //Venta.lbfecha.setText(hora + ":" + minutos + ":" + segundos + " "+ampm);
             comparaHora(hora + ":" + minutos);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(60000);
             }catch(InterruptedException e) {}
         }
     }

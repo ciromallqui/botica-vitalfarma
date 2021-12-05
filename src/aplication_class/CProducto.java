@@ -12,6 +12,7 @@ public class CProducto {
     private String idPresentacion;
     private String presentacion;
     private String fechaVencimiento;
+    private String laboratorio;
 
     public String getIdProducto() {
         return idProducto;
@@ -108,5 +109,12 @@ public class CProducto {
     public void setPresentacion(String presentacion) {
         this.presentacion = presentacion;
     }
-    
+
+    public String getLaboratorio() {
+        return laboratorio;
+    }
+
+    public void setLaboratorio(String laboratorio) {
+        this.laboratorio = laboratorio;
+    }
 }

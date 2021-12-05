@@ -1,28 +1,40 @@
 package view;
 
 import aplication_class.CReporteSolicitud;
-import controller.ParametroController;
+import aplication_class.CUsuario;
 import controller.ProductoController;
 import controller.ReporteController;
 import controller.TurnoController;
 import cross_cuting.TableHeadCustom;
 import cross_cuting.TableRowColor;
+import java.awt.BorderLayout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JRViewer;
+import net.sf.jasperreports.view.JasperViewer;
+import view.info.MessageToast;
 import view.info.ReporteMonto;
 
-/**
- *@author CIRO
- */
 public class Reporte extends javax.swing.JInternalFrame {
     DefaultTableModel modelo;
     ProductoController productoController;
     ReporteController reporteController;
     TurnoController turnoController;
     CReporteSolicitud filtros;
+    public MessageToast messageToast;
     public static String tipoReporte;
+    public boolean sowBMonto;
     public Reporte() {
         initComponents();
         productoController = new ProductoController();
@@ -31,6 +43,11 @@ public class Reporte extends javax.swing.JInternalFrame {
         filtros = new CReporteSolicitud();
         tipoReporte = "D";
         bmonto3.setOpaque(true);
+        
+        if(!CUsuario.getTipoUsuario().equals("ADMINISTRADOR")){
+            tp.remove(1);
+            tp.remove(1);
+        }
         
         modelo = new DefaultTableModel(null, new String[]{"N°","Presentación","Producto","Cantidad","Monto","Hora","Encargado","Turno"});
         tabla.setModel(modelo);
@@ -45,15 +62,16 @@ public class Reporte extends javax.swing.JInternalFrame {
         
         SimpleDateFormat sdff = new SimpleDateFormat("yyyy-MM-dd");
         filtros.setFechaVenta(sdff.format(dfecha.getDate()));
-        reporteController.listarReporteDiario(modelo, filtros);
+//        reporteController.listarReporteDiario(modelo, filtros);
         turnoController.cargarTurno(cbturno1);
         turnoController.cargarTurno(cbturno2);
         turnoController.cargarTurno(cbturno3);
         productoController.cargarPresentacion(cbpresentacion1);
         productoController.cargarPresentacion(cbpresentacion2);
         productoController.cargarPresentacion(cbpresentacion3);
-        if(modelo.getRowCount() == 0) bmonto1.setVisible(false);
-        columnSize1();
+//        if(modelo.getRowCount() == 0) bmonto1.setVisible(false);
+//        columnSize1();
+        reporteDia();
     }
     
     private void columnSize1(){
@@ -81,17 +99,85 @@ public class Reporte extends javax.swing.JInternalFrame {
         tabla.getColumnModel().getColumn(5).setMaxWidth(300);
         tabla.getColumnModel().getColumn(6).setMinWidth(120);
         tabla.getColumnModel().getColumn(6).setMaxWidth(120);
-//        tabla.setDefaultRenderer(Object.class, new TableRowColor());
-//        tabla.setShowHorizontalLines(true);
-//        tabla.setShowVerticalLines(false);
     }
+    
+    private void reporteDia(){
+        messageToast = new MessageToast(new javax.swing.JFrame(), true);
+        sowBMonto = false;
+        paviso.setVisible(false);
+        List data = reporteController.listarReporteDiario(filtros);
+        if(data.size() > 0){
+            try {
+                JasperReport reporte= (JasperReport) JRLoader.loadObject("ReporteDia.jasper");
+                Map parametro = new HashMap();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                parametro.put("plogo",this.getClass().getResourceAsStream("/Image/logo_simple.jpg"));
+                parametro.put("ptitulo", "REPORTE DE VENTAS DEL DÍA "+ sdf.format(dfecha.getDate()));
+                JasperPrint jprint= JasperFillManager.fillReport(reporte, parametro,new JRBeanCollectionDataSource(data));
+                //JasperViewer jRViewer =new JasperViewer(jprint,false); //Para mostrar el reporte en una ventana externa
+                JRViewer jRViewer = new JRViewer(jprint);
+                board.removeAll();
+                board.setLayout(new BorderLayout());        
+                board.add(jRViewer, BorderLayout.CENTER);
+                jRViewer.setVisible(true);
+                board.repaint();
+                board.revalidate();
+                sowBMonto = true;
+            } catch (JRException ex) {
+                messageToast.response("No se encontró el archivo para generar el reporte", 250, 70, "danger");
+            } 
+        }else{
+            board.removeAll();
+            board.setLayout(new BorderLayout());   
+            board.add(paviso, BorderLayout.CENTER);
+            bmonto1.setVisible(false);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            lbreporteTitulo.setText("<html><body style='text-decoration: underline;'>REPORTE DE VENTAS DEL DÍA "+ sdf.format(dfecha.getDate()) +"</body></html>");
+            paviso.setVisible(true);
+        }
+    }
+    
+    private void reporteGeneral(){
+        messageToast = new MessageToast(new javax.swing.JFrame(), true);
+        sowBMonto = false;
+        paviso.setVisible(false);
+        List data = reporteController.listarReporteGeneral(filtros);
+        if(data.size() > 0){
+            try {
+                JasperReport reporte= (JasperReport) JRLoader.loadObject("ReporteGeneral.jasper");
+                Map parametro = new HashMap();
+                parametro.put("plogo",this.getClass().getResourceAsStream("/Image/logo_simple.jpg"));
+                if(tipoReporte.equals("M")) parametro.put("ptitulo", "REPORTE DE VENTAS DEL MES DE "+ mesText(mes.getMonth()+1));
+                else parametro.put("ptitulo", "REPORTE GENERAL DE VENTAS");
+                JasperPrint jprint= JasperFillManager.fillReport(reporte, parametro,new JRBeanCollectionDataSource(data));
+                JRViewer jRViewer = new JRViewer(jprint);
+                board.removeAll();
+                board.setLayout(new BorderLayout());        
+                board.add(jRViewer, BorderLayout.CENTER);
+                jRViewer.setVisible(true);
+                board.repaint();
+                board.revalidate();
+                sowBMonto = true;
+            } catch (JRException ex) {
+                messageToast.response("No se encontró el archivo para generar el reporte", 250, 70, "danger");
+            }
+        }else{
+            board.removeAll();
+            board.setLayout(new BorderLayout());   
+            board.add(paviso, BorderLayout.CENTER);
+            if(tipoReporte.equals("M")) lbreporteTitulo.setText("<html><body style='text-decoration: underline;'>REPORTE DE VENTAS DEL MES DE "+ mesText(mes.getMonth()+1) +"</body></html>");
+            else lbreporteTitulo.setText("<html><body style='text-decoration: underline;'>REPORTE GENERAL DE VENTAS</body></html>");
+            paviso.setVisible(true);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         tp = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
+        rpdiario = new javax.swing.JPanel();
         dfecha = new com.toedter.calendar.JDateChooser();
         cbpresentacion1 = new javax.swing.JComboBox<>();
         bactualizar1 = new javax.swing.JButton();
@@ -102,7 +188,7 @@ public class Reporte extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         bmonto1 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
+        rpmensual = new javax.swing.JPanel();
         mes = new com.toedter.calendar.JMonthChooser();
         cbpresentacion2 = new javax.swing.JComboBox<>();
         bactualizar2 = new javax.swing.JButton();
@@ -113,7 +199,7 @@ public class Reporte extends javax.swing.JInternalFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         bmonto2 = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
+        rpgeneral = new javax.swing.JPanel();
         dfechai = new com.toedter.calendar.JDateChooser();
         dfechaf = new com.toedter.calendar.JDateChooser();
         jLabel27 = new javax.swing.JLabel();
@@ -128,6 +214,12 @@ public class Reporte extends javax.swing.JInternalFrame {
         bmonto3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
+        board = new javax.swing.JPanel();
+        paviso = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lbreporteTitulo = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
 
         setClosable(true);
         setIconifiable(true);
@@ -145,8 +237,8 @@ public class Reporte extends javax.swing.JInternalFrame {
             }
         });
 
-        jPanel2.setBackground(new java.awt.Color(227, 111, 30));
-        jPanel2.setPreferredSize(new java.awt.Dimension(832, 100));
+        rpdiario.setBackground(new java.awt.Color(227, 111, 30));
+        rpdiario.setPreferredSize(new java.awt.Dimension(832, 100));
 
         dfecha.setBackground(new java.awt.Color(255, 153, 0));
 
@@ -218,25 +310,25 @@ public class Reporte extends javax.swing.JInternalFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout rpdiarioLayout = new javax.swing.GroupLayout(rpdiario);
+        rpdiario.setLayout(rpdiarioLayout);
+        rpdiarioLayout.setHorizontalGroup(
+            rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rpdiarioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dfecha, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbturno1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbpresentacion1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(txproducto1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -245,32 +337,32 @@ public class Reporte extends javax.swing.JInternalFrame {
                 .addComponent(bmonto1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(175, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        rpdiarioLayout.setVerticalGroup(
+            rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rpdiarioLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(rpdiarioLayout.createSequentialGroup()
+                        .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel3)
                                 .addComponent(jLabel9)
                                 .addComponent(jLabel10)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txproducto1, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                             .addComponent(dfecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cbturno1)
                             .addComponent(cbpresentacion1)))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(rpdiarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(bmonto1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bactualizar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
-        tp.addTab("Reporte diario", jPanel2);
+        tp.addTab("Reporte diario", rpdiario);
 
-        jPanel3.setBackground(new java.awt.Color(227, 111, 30));
+        rpmensual.setBackground(new java.awt.Color(227, 111, 30));
 
         mes.setBackground(new java.awt.Color(255, 153, 0));
 
@@ -336,25 +428,25 @@ public class Reporte extends javax.swing.JInternalFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout rpmensualLayout = new javax.swing.GroupLayout(rpmensual);
+        rpmensual.setLayout(rpmensualLayout);
+        rpmensualLayout.setHorizontalGroup(
+            rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rpmensualLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mes, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbturno2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel14)
                     .addComponent(cbpresentacion2, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(txproducto2, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -363,37 +455,37 @@ public class Reporte extends javax.swing.JInternalFrame {
                 .addComponent(bmonto2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(52, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+        rpmensualLayout.setVerticalGroup(
+            rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rpmensualLayout.createSequentialGroup()
+                .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, rpmensualLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel12)
                                 .addComponent(jLabel14))
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel4)
                                 .addComponent(jLabel11)))
                         .addGap(0, 0, 0)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(txproducto2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(cbpresentacion2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                                 .addComponent(mes, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                                 .addComponent(cbturno2))))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(rpmensualLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(rpmensualLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(bactualizar2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(bmonto2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tp.addTab("Reportes mensuales", jPanel3);
+        tp.addTab("Reporte mensual", rpmensual);
 
-        jPanel4.setBackground(new java.awt.Color(227, 111, 30));
+        rpgeneral.setBackground(new java.awt.Color(227, 111, 30));
 
         dfechai.setBackground(new java.awt.Color(255, 153, 0));
 
@@ -465,29 +557,29 @@ public class Reporte extends javax.swing.JInternalFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout rpgeneralLayout = new javax.swing.GroupLayout(rpgeneral);
+        rpgeneral.setLayout(rpgeneralLayout);
+        rpgeneralLayout.setHorizontalGroup(
+            rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rpgeneralLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dfechai, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel27))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(dfechaf, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel28))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbturno3, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(cbpresentacion3, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(txproducto3, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -496,32 +588,32 @@ public class Reporte extends javax.swing.JInternalFrame {
                 .addComponent(bmonto3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(46, Short.MAX_VALUE))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        rpgeneralLayout.setVerticalGroup(
+            rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rpgeneralLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(rpgeneralLayout.createSequentialGroup()
+                        .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel27)
                             .addComponent(jLabel28)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)
                             .addComponent(jLabel5))
                         .addGap(1, 1, 1)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(dfechaf, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                             .addComponent(dfechai, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cbturno3, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(cbpresentacion3, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txproducto3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(rpgeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(bmonto3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(bactualizar3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        tp.addTab("Otros reportes", jPanel4);
+        tp.addTab("Reporte general", rpgeneral);
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -538,14 +630,84 @@ public class Reporte extends javax.swing.JInternalFrame {
         tabla.setRowHeight(30);
         jScrollPane1.setViewportView(tabla);
 
+        paviso.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/logo_simple.png"))); // NOI18N
+
+        lbreporteTitulo.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        lbreporteTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbreporteTitulo.setText("<html><body style='text-decoration: underline'>REPORTE DE VENTAS DEL DÍA</body></html>");
+
+        jPanel2.setBackground(new java.awt.Color(102, 102, 102));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 2, Short.MAX_VALUE)
+        );
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        jLabel13.setText("El reporte no cuenta con datos para mostrar");
+
+        javax.swing.GroupLayout pavisoLayout = new javax.swing.GroupLayout(paviso);
+        paviso.setLayout(pavisoLayout);
+        pavisoLayout.setHorizontalGroup(
+            pavisoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pavisoLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addGroup(pavisoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pavisoLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pavisoLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(lbreporteTitulo)))
+                .addContainerGap())
+        );
+        pavisoLayout.setVerticalGroup(
+            pavisoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pavisoLayout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(pavisoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pavisoLayout.createSequentialGroup()
+                        .addComponent(lbreporteTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)))
+                .addGap(27, 27, 27)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel13)
+                .addContainerGap(250, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout boardLayout = new javax.swing.GroupLayout(board);
+        board.setLayout(boardLayout);
+        boardLayout.setHorizontalGroup(
+            boardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(paviso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        boardLayout.setVerticalGroup(
+            boardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(paviso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(tp)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(board, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -553,7 +715,9 @@ public class Reporte extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(tp, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(board, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -572,63 +736,34 @@ public class Reporte extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tpMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tpMouseClicked
-//        filtros = new CReporteSolicitud();
         if(tp.getSelectedIndex()==0){
             tipoReporte = "D";
             modelo = new DefaultTableModel(null, new String[]{"N°","Presentación","Producto","Cantidad","Monto","Hora","Encargado","Turno"});
             tabla.setModel(modelo);
             columnSize1();
-
-//            String date = new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
-//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//            try {
-//                dfecha.setDate(sdf.parse(date));
-//            } catch (ParseException ex) {}
-            
-//            SimpleDateFormat sdff = new SimpleDateFormat("yyyy-MM-dd");
-//            filtros.setFechaVenta(sdff.format(dfecha.getDate()));
-//            if(cbturno1.getSelectedIndex() > 0 )filtros.setTurno(cbturno1.getSelectedItem().toString());
-//            if(cbpresentacion1.getSelectedIndex() > 0) filtros.setPresentacion(cbpresentacion1.getSelectedItem().toString());
-//            filtros.setProducto(txproducto1.getText());
             filtros = filtroReporte();
-            reporteController.listarReporteDiario(modelo, filtros);
+            reporteDia();
+//            reporteController.listarReporteDiario(modelo, filtros);
         }
         if(tp.getSelectedIndex()==1){
             tipoReporte = "M";
             modelo = new DefaultTableModel(null, new String[]{"N°","Presentación","Producto","Cantidad","Monto","Encargado","Turno"});
             tabla.setModel(modelo);
             columnSize2();
-//            String fecha = new SimpleDateFormat("M").format(new java.util.Date());
-//            mes.setMonth(Integer.parseInt(fecha)-1);
-//            filtros.setMes(mes.getMonth()+1);
-//            if(cbturno2.getSelectedIndex() > 0)filtros.setTurno(cbturno2.getSelectedItem().toString());
-//            if(cbpresentacion2.getSelectedIndex() > 0) filtros.setPresentacion(cbpresentacion2.getSelectedItem().toString());
-//            filtros.setProducto(txproducto2.getText());
             filtros = filtroReporte();
-            reporteController.listarReporteGeneral(modelo, filtros);
+            reporteGeneral();
+//            reporteController.listarReporteGeneral(modelo, filtros);
         }
         if(tp.getSelectedIndex()==2){
             tipoReporte = "G";
             modelo = new DefaultTableModel(null, new String[]{"N°","Presentación","Producto","Cantidad","Monto","Encargado","Turno"});
             tabla.setModel(modelo);
             columnSize2();
-            
-//            String date = new SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
-//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//            try {
-//                dfechai.setDate(sdf.parse(date));
-//                dfechaf.setDate(sdf.parse(date));
-//            } catch (ParseException ex) {}
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//            filtros.setFechaVentaInicial(sdf.format(dfechai.getDate()));
-//            filtros.setFechaVentaFinal(sdf.format(dfechaf.getDate()));
-//            if(cbturno3.getSelectedIndex() > 0) filtros.setTurno(cbturno3.getSelectedItem().toString());
-//            if(cbpresentacion3.getSelectedIndex() > 0) filtros.setPresentacion(cbpresentacion3.getSelectedItem().toString());
-//            filtros.setProducto(txproducto3.getText());
             filtros = filtroReporte();
-            reporteController.listarReporteGeneral(modelo, filtros);
+            reporteGeneral();
+//            reporteController.listarReporteGeneral(modelo, filtros);
         }
-        if(modelo.getRowCount() > 0){
+        if(sowBMonto){
             bmonto1.setVisible(true);
             bmonto2.setVisible(true);
             bmonto3.setVisible(true);
@@ -640,57 +775,31 @@ public class Reporte extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tpMouseClicked
 
     private void bactualizar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bactualizar2ActionPerformed
-        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
-//        filtros.setTurno(null);
-//        filtros.setPresentacion(null);
-//        filtros.setMes(mes.getMonth()+1);
-//        if(cbturno2.getSelectedIndex() > 0) filtros.setTurno(cbturno2.getSelectedItem().toString());
-//        if(cbpresentacion2.getSelectedIndex() > 0)filtros.setPresentacion(cbpresentacion2.getSelectedItem().toString());
-//        filtros.setProducto(txproducto2.getText());
+//        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
+//        reporteController.listarReporteGeneral(modelo, filtros);
         filtros = filtroReporte();
-        reporteController.listarReporteGeneral(modelo, filtros);
-//        if(cbpresentacion2.getSelectedIndex()==0)
-//            DReportes.CargarReporte2(modelo, mes.getMonth()+1, "");
-//        else
-//            DReportes.CargarReporte2(modelo, mes.getMonth()+1, cbpresentacion2.getSelectedItem().toString())
-        if(modelo.getRowCount() > 0)
+        reporteGeneral();
+        if(sowBMonto)
             bmonto2.setVisible(true);
         else bmonto2.setVisible(false);
     }//GEN-LAST:event_bactualizar2ActionPerformed
 
     private void bactualizar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bactualizar3ActionPerformed
-        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
-//        filtros.setTurno(null);
-//        filtros.setPresentacion(null);
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        filtros.setFechaVentaInicial(sdf.format(dfechai.getDate()));
-//        filtros.setFechaVentaFinal(sdf.format(dfechaf.getDate()));
-//        if(cbturno3.getSelectedIndex() > 0) filtros.setTurno(cbturno3.getSelectedItem().toString());
-//        if(cbpresentacion3.getSelectedIndex() > 0)filtros.setPresentacion(cbpresentacion3.getSelectedItem().toString());
-//        filtros.setProducto(txproducto3.getText());
+//        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
+//        reporteController.listarReporteGeneral(modelo, filtros);
         filtros = filtroReporte();
-        reporteController.listarReporteGeneral(modelo, filtros);
-        if(modelo.getRowCount() > 0)
+        reporteGeneral();
+        if(sowBMonto)
             bmonto3.setVisible(true);
         else bmonto3.setVisible(false);
-//        if(cbpresentacion3.getSelectedIndex()==0)
-//            DReportes.CargarReporte3(modelo,sdf.format(date1),sdf.format(date2),"");
-//        else
-//            DReportes.CargarReporte3(modelo,sdf.format(date1),sdf.format(date2), cbpresentacion3.getSelectedItem().toString());
     }//GEN-LAST:event_bactualizar3ActionPerformed
 
     private void bactualizar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bactualizar1ActionPerformed
-        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
-//        filtros.setTurno(null);
-//        filtros.setPresentacion(null);
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        filtros.setFechaVenta(sdf.format(dfecha.getDate()));
-//        if(cbturno1.getSelectedIndex() > 0) filtros.setTurno(cbturno1.getSelectedItem().toString());
-//        if(cbpresentacion1.getSelectedIndex() > 0)filtros.setPresentacion(cbpresentacion1.getSelectedItem().toString());
-//        filtros.setProducto(txproducto1.getText());
+//        while(modelo.getRowCount()!=0){modelo.removeRow(0);}
+//        reporteController.listarReporteDiario(modelo, filtros);
         filtros = filtroReporte();
-        reporteController.listarReporteDiario(modelo, filtros);
-        if(modelo.getRowCount() > 0)
+        reporteDia();
+        if(sowBMonto)
             bmonto1.setVisible(true);
         else bmonto1.setVisible(false);
     }//GEN-LAST:event_bactualizar1ActionPerformed
@@ -772,6 +881,7 @@ public class Reporte extends javax.swing.JInternalFrame {
     private javax.swing.JButton bmonto1;
     private javax.swing.JButton bmonto2;
     private javax.swing.JButton bmonto3;
+    private javax.swing.JPanel board;
     private static javax.swing.JComboBox<String> cbpresentacion1;
     private static javax.swing.JComboBox<String> cbpresentacion2;
     private static javax.swing.JComboBox<String> cbpresentacion3;
@@ -781,9 +891,11 @@ public class Reporte extends javax.swing.JInternalFrame {
     private static com.toedter.calendar.JDateChooser dfecha;
     private static com.toedter.calendar.JDateChooser dfechaf;
     private static com.toedter.calendar.JDateChooser dfechai;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
@@ -796,10 +908,13 @@ public class Reporte extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbreporteTitulo;
     private static com.toedter.calendar.JMonthChooser mes;
+    private javax.swing.JPanel paviso;
+    private javax.swing.JPanel rpdiario;
+    private javax.swing.JPanel rpgeneral;
+    private javax.swing.JPanel rpmensual;
     private javax.swing.JTable tabla;
     private javax.swing.JTabbedPane tp;
     private static javax.swing.JTextField txproducto1;
@@ -831,6 +946,36 @@ public class Reporte extends javax.swing.JInternalFrame {
                 if(cbpresentacion3.getSelectedIndex() > 0)item.setPresentacion(cbpresentacion3.getSelectedItem().toString());
                 item.setProducto(txproducto3.getText());
                 return item;
+        }
+    }
+    
+    private String mesText(int mes){
+        switch(mes){
+            case 1:
+                return "ENERO";
+            case 2:
+                return "FEBRERO";
+            case 3:
+                return "MARZO";
+            case 4:
+                return "ABRIL";
+            case 5:
+                return "MAYO";
+            case 6:
+                return "JUNIO";
+            case 7:
+                return "JULIO";
+            case 8:
+                return "AGOSTO";
+            case 9:
+                return "SETIEMBRE";
+            case 10:
+                return "OCTUBRE";
+            case 11:
+                return "NOVIEMBRE";
+            case 12:
+                return "DICIEMBRE";
+            default: return "MES DESCONOSIDO";
         }
     }
 }

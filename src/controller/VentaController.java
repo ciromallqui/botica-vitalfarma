@@ -1,15 +1,21 @@
 package controller;
 
+import MFC.util.JLibrary.DecimalNumber;
 import aplication_class.CDevolucion;
+import aplication_class.CTurno;
 import aplication_class.CVenta;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import model.TurnoMapper;
 import model.VentaMapper;
 
 public class VentaController {
     public VentaMapper ventaMapper;
+    public TurnoMapper turnoMapper;
     
     public VentaController(){
         ventaMapper = new VentaMapper();
+        turnoMapper = new TurnoMapper();
     }
     
     public int insertarVenta(CVenta venta){
@@ -25,6 +31,31 @@ public class VentaController {
     
     public double ventaDia(String fecha){
         return ventaMapper.ventaDia(fecha);
+    }
+    
+    public void mostrarProductoVentaDiario(DefaultTableModel model, String nompreProducto){
+        List<CTurno> lt = turnoMapper.listarTurno();
+        List<CVenta> lv = ventaMapper.mostrarProductoVentaDiario(nompreProducto);
+        double monto = 0.0;
+        double montoTotal = 0.0;
+        if(lv.size() > 0){
+            int i = 1;
+            for (CTurno t : lt) {
+                for (CVenta v : lv) {
+                    if(t.getNombre().equals(v.getTurno())){
+                        model.addRow(new Object[]{""+(i++),v.getPresentacion(),v.getProducto(),v.getLaboratorio(),v.getFechaVenta(),v.getCantidad(),DecimalNumber.ReduceDecimal(v.getMonto(),2),v.getTurno()});
+                        monto = monto + v.getMonto();
+                    }
+                }
+                i = 1;
+                if(monto > 0.0){
+                    model.addRow(new Object[]{"","","","","","<html><body style='color: blue;font-weight: bold;'>MONTO TURNO</body></html>","<html><body style='color: blue;font-weight: bold;'>"+DecimalNumber.ReduceDecimal(monto,2)+"</body></html>","<html><body style='color: blue;font-weight: bold;'>"+t.getNombre()+"</body></html>"});
+                    montoTotal = montoTotal + monto;
+                }
+                monto = 0.0;
+            }
+            model.addRow(new Object[]{"","","","","","<html><body style='color: blue;font-weight: bold;'>MONTO TOTAL</body></html>","<html><body style='color: blue;font-weight: bold;'>"+DecimalNumber.ReduceDecimal(montoTotal,2)+"</body></html>",""});
+        }
     }
     
     //DEVOLUCIÓN

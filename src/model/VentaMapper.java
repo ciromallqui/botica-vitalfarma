@@ -6,7 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import view.Main;
 
@@ -68,6 +69,42 @@ public class VentaMapper {
         return venta;
     }
     
+    public List<CVenta> mostrarProductoVentaDiario(String nompreProducto){
+        List<CVenta> lv = new ArrayList<CVenta>();
+        try {
+            st = cn.createStatement();
+            String query = "SELECT p.id_producto, tp.descripcion, p.nombre, p.laboratorio, date_format(v.fecha_venta,'%d/%m/%Y'), SUM(vd.cantidad_producto), SUM((vd.monto - vd.descuento)), t.descripcion, t.id_turno "
+                   .concat("FROM t_producto p INNER JOIN t_producto_fechav pf ON pf.id_producto = p.id_producto ")
+                   .concat("INNER JOIN t_presentacion tp ON tp.id_presentacion = p.id_presentacion ")
+                   .concat("INNER JOIN t_venta_detalle vd ON vd.id_producto_fechav = pf.id_producto_fechav ")
+                   .concat("INNER JOIN t_venta v ON v.id_venta = vd.id_venta ")
+                   .concat("INNER JOIN t_turno t ON t.id_turno = v.id_turno ")
+                   .concat("WHERE vd.estado <> 2 AND p.nombre LIKE '%"+nompreProducto+"%' ")
+                   .concat("AND DATE(v.fecha_venta) = DATE(NOW()) ")
+                   .concat("GROUP BY p.id_producto, tp.descripcion, p.nombre, p.laboratorio, date_format(v.fecha_venta,'%d/%m/%Y'), t.descripcion, t.id_turno ")
+                   .concat("ORDER BY t.id_turno, p.nombre, tp.descripcion;");
+            rs = st.executeQuery(query);
+//            int i=1;
+            while(rs.next()){
+                CVenta v = new CVenta();
+                v.setIdProducto(rs.getString(1));
+                v.setPresentacion(rs.getString(2));
+                v.setProducto(rs.getString(3));
+                v.setLaboratorio(rs.getString(4));
+                v.setFechaVenta(rs.getString(5));
+                v.setCantidad(rs.getInt(6));
+                v.setMonto(rs.getDouble(7));
+                v.setTurno(rs.getString(8));
+                v.setIdTurno(rs.getInt(9));
+                lv.add(v);
+                //modelo.addRow(new Object[]{""+(i++),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8)});
+            }
+        } catch (SQLException ex) {
+            Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos para la devolución:\n"+ ex.getMessage());
+        }
+        return lv;
+    }
+    
     //DEVOLUCIÓN
     public void insertarDevolucionProducto(CDevolucion d){
         try {
@@ -87,7 +124,7 @@ public class VentaMapper {
                    .concat("INNER JOIN t_venta_detalle vd ON vd.id_producto_fechav = pf.id_producto_fechav ")
                    .concat("INNER JOIN t_venta v ON v.id_venta = vd.id_venta ")
                    .concat("WHERE vd.estado <> 2 AND p.nombre LIKE '%"+nompreProducto+"%' ")
-                   .concat("AND (DATE(v.fecha_venta) = DATE(NOW()) OR DATE(v.fecha_venta) = (DATE(NOW())) - INTERVAL 1 DAY)")
+                   .concat("AND (DATE(v.fecha_venta) = DATE(NOW()) OR DATE(v.fecha_venta) = (DATE(NOW())) - INTERVAL 1 DAY) ")
                    .concat("ORDER BY v.fecha_venta ASC;");
             rs = st.executeQuery(query);
             int i=1;

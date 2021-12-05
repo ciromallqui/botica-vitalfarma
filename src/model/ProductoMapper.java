@@ -1,5 +1,6 @@
 package model;
 
+import MFC.util.JLibrary.DecimalNumber;
 import aplication_class.CProducto;
 import com.mxrck.autocompleter.TextAutoCompleter;
 import java.sql.Connection;
@@ -118,15 +119,15 @@ public class ProductoMapper {
             categoria = "AND p.id_presentacion=(SELECT id_presentacion FROM t_presentacion WHERE descripcion='"+presentacion+"') ";
         try {
             st = cn.createStatement();
-            String query = "SELECT p.id_producto, p.nombre, p.precio_venta_unitario, date_format(pf.fecha_vencimiento,'%d/%m/%Y'), pf.stock_actual "
-                   .concat("FROM t_producto p INNER JOIN t_producto_fechav pf on pf.id_producto = p.id_producto ")
+            String query = "SELECT pr.descripcion, p.nombre, p.laboratorio, date_format(pf.fecha_vencimiento,'%d/%m/%Y'), p.precio_venta_unitario, pf.stock_actual, p.id_producto "
+                   .concat("FROM t_producto p INNER JOIN t_producto_fechav pf on pf.id_producto = p.id_producto INNER JOIN t_presentacion pr ON pr.id_presentacion = p.id_presentacion ")
                    .concat("WHERE pf.estado = 1 AND p.nombre LIKE '%"+nompreProducto+"%' ")
                    .concat(categoria)
                    .concat("ORDER BY p.nombre ASC;");
             rs = st.executeQuery(query);
             int i=1;
             while(rs.next()){
-                modelo.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(4),rs.getString(3),rs.getString(5)});
+                modelo.addRow(new String[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7)});
             }
         } catch (SQLException ex) {
             Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos en tabla:\n"+ ex.getMessage());
@@ -139,16 +140,16 @@ public class ProductoMapper {
             categoria = "AND p.id_presentacion=(SELECT id_presentacion FROM t_presentacion WHERE descripcion='"+presentacion+"') ";
         try {
             st = cn.createStatement();
-            String query = "SELECT p.id_producto, tp.descripcion, p.nombre, date_format(pf.fecha_vencimiento,'%d/%m/%Y'), p.precio_venta_unitario, pf.stock_actual "
+            String query = "SELECT tp.descripcion, p.nombre, p.laboratorio, date_format(pf.fecha_vencimiento,'%d/%m/%Y'), p.precio_venta_unitario, pf.stock_actual, p.id_producto "
                    .concat("FROM t_producto p INNER JOIN t_producto_fechav pf ON pf.id_producto = p.id_producto ")
                    .concat("INNER JOIN t_presentacion tp ON tp.id_presentacion = p.id_presentacion ")
                    .concat("WHERE pf.estado = 1 AND p.nombre LIKE '%"+nompreProducto+"%' ")
                    .concat(categoria)
-                   .concat("ORDER BY p.nombre ASC;");
+                   .concat("ORDER BY p.nombre, p.laboratorio ASC;");
             rs = st.executeQuery(query);
             int i=1;
             while(rs.next()){
-                modelo.addRow(new Object[]{""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),Double.parseDouble(rs.getString(5)),rs.getString(6)});
+                modelo.addRow(new Object[]{rs.getString(7),""+(i++),rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),DecimalNumber.ReduceDecimal(Double.parseDouble(rs.getString(5)),2),rs.getString(6),""});
             }
         } catch (SQLException ex) {
             Main.txlog.setText(Main.txlog.getText() +"\n======= Mostrar productos en la tabla de control principal:\n"+ ex.getMessage());
@@ -160,7 +161,7 @@ public class ProductoMapper {
         try {
             st = cn.createStatement();
             String query = "SELECT p.id_presentacion, p.id_producto, p.nombre, p.indicacion, p.precio_venta_unitario, p.stock_minimo, date_format(pf.fecha_vencimiento,'%d/%m/%Y'), pf.stock_actual, "
-                   .concat("pf.id_producto_fechav, pf.precio_compra_total, pf.precio_compra_unitario, (SELECT descripcion FROM t_presentacion WHERE id_presentacion=p.id_presentacion) AS presentacion ")
+                   .concat("pf.id_producto_fechav, pf.precio_compra_total, pf.precio_compra_unitario, (SELECT descripcion FROM t_presentacion WHERE id_presentacion=p.id_presentacion) AS presentacion, p.laboratorio ")
                    .concat("FROM t_producto p INNER JOIN t_producto_fechav pf on pf.id_producto = p.id_producto ")
                    .concat("WHERE p.id_producto = '"+idProducto+"' AND date_format(pf.fecha_vencimiento,'%d/%m/%Y')='"+fechaVencimiento+"' ORDER BY p.nombre ASC, pf.id_producto ASC;");
             rs = st.executeQuery(query);
@@ -177,6 +178,7 @@ public class ProductoMapper {
                 res.setPrecioCompraTotal(Double.parseDouble(rs.getString(10)));
                 res.setPrecioCompraUnitario(Double.parseDouble(rs.getString(11)));
                 res.setPresentacion(rs.getString(12));
+                res.setLaboratorio(rs.getString(13));
             }
         } catch (SQLException ex) {
             Main.txlog.setText(Main.txlog.getText() +"\n======= Consultar datos de un producto:\n"+ ex.getMessage());
@@ -200,7 +202,7 @@ public class ProductoMapper {
     public int insertarProducto(CProducto p){
         try {
             st = cn.createStatement();
-            return st.executeUpdate("INSERT INTO t_producto (id_producto,nombre,indicacion,precio_venta_unitario,stock_minimo,id_presentacion) VALUES('"+p.getIdProducto()+"','"+p.getNombre()+"','"+p.getIndicacion()+"',"+p.getPrecioVentaUnitario()+","+p.getStockMinimo()+","+p.getIdPresentacion()+");");
+            return st.executeUpdate("INSERT INTO t_producto (id_producto,nombre,laboratorio,indicacion,precio_venta_unitario,stock_minimo,id_presentacion) VALUES('"+p.getIdProducto()+"','"+p.getNombre()+"','"+p.getLaboratorio()+"','"+p.getIndicacion()+"',"+p.getPrecioVentaUnitario()+","+p.getStockMinimo()+","+p.getIdPresentacion()+");");
         } catch (SQLException ex) {
             Main.txlog.setText(Main.txlog.getText() +"\n======= Insertar un nuevo producto:\n"+ ex.getMessage());
             return 0;
@@ -210,7 +212,7 @@ public class ProductoMapper {
     public int actualizarProducto(CProducto p){
         try {
             st = cn.createStatement();
-            return st.executeUpdate("UPDATE t_producto SET nombre='"+p.getNombre()+"',indicacion='"+p.getIndicacion()+"',precio_venta_unitario="+p.getPrecioVentaUnitario()+",stock_minimo="+p.getStockMinimo()+",id_presentacion="+p.getIdPresentacion()+" WHERE id_producto='"+p.getIdProducto()+"';");
+            return st.executeUpdate("UPDATE t_producto SET nombre='"+p.getNombre()+"',laboratorio='"+p.getLaboratorio()+"',indicacion='"+p.getIndicacion()+"',precio_venta_unitario="+p.getPrecioVentaUnitario()+",stock_minimo="+p.getStockMinimo()+",id_presentacion="+p.getIdPresentacion()+" WHERE id_producto='"+p.getIdProducto()+"';");
         } catch (SQLException ex) {
             Main.txlog.setText(Main.txlog.getText() +"\n======= Actualizar datos del producto:\n"+ ex.getMessage());
             return 0;

@@ -16,9 +16,15 @@ public class ReporteController {
     public void listarReporteDiario(DefaultTableModel model, CReporteSolicitud solicitud){
         reporteMapper.listarReporteDiario(model, solicitud);
     }
+    public List listarReporteDiario(CReporteSolicitud solicitud){
+        return reporteMapper.listarReporteDiario(solicitud);
+    }
     
     public void listarReporteGeneral(DefaultTableModel model, CReporteSolicitud solicitud){
         reporteMapper.listarReporteGeneral(model, solicitud);
+    }
+    public List listarReporteGeneral(CReporteSolicitud solicitud){
+        return reporteMapper.listarReporteGeneral(solicitud);
     }
     
     public List<CReporteMonto> listaMontoDiario(CReporteSolicitud solicitud, String tipoReporte){

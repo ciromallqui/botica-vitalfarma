@@ -3,15 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/controller/UsuarioController.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/cross_cuting/Validar.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/RegistroUsuario.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/model/UsuarioMapper.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/CambioDB.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/model/VentaMapper.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/controller/ProductoController.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/VentaDetalle.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/Presentacion.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/controller/VentaController.java</file>
             <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/Producto.java</file>
             <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/Main.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/Backap.java</file>
-            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/aplication_class/CAdministrador.java</file>
+            <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/view/Control.java</file>
             <file>file:/D:/PERSONAL/PROJECTS/Netbeans/botica-vitalfarma/src/model/ProductoMapper.java</file>
         </group>
     </open-files>

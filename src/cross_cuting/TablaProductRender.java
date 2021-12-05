@@ -27,29 +27,29 @@ public class TablaProductRender extends DefaultTableCellRenderer{
 //        } 
         
         componente.setBackground(new java.awt.Color(255,255,255));
-        if(column==1){
+        if(column==0){
             stockMinimo = productoController.obtenerStockMinimo(String.valueOf(value));
         }
-        if(column==6){
+        if(column==7){
             stock = Integer.parseInt(String.valueOf(value));
         }
         if(stock<=stockMinimo){
             
-            if(column==7){
+            if(column==8){
                 componente.setHorizontalAlignment(CENTER);
                 componente.setBackground(Color.WHITE);
                 componente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/semaforo_rojo.png")));
             }
         }
         if(stock>stockMinimo && stock<=(stockMinimo*2)){
-            if(column==7){
+            if(column==8){
                 componente.setHorizontalAlignment(CENTER);
                 componente.setBackground(Color.WHITE);
                 componente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/semaforo_amarillo.png")));
             }
         }
         if(stock>(stockMinimo*2)){
-            if(column==7){
+            if(column==8){
                 componente.setHorizontalAlignment(CENTER);
                 componente.setBackground(Color.WHITE);
                 componente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/semaforo_azul.png")));
@@ -57,7 +57,7 @@ public class TablaProductRender extends DefaultTableCellRenderer{
         }
         
         if(isSelected){
-            if(column!=7)
+            if(column!=8)
                 componente.setBackground(new java.awt.Color(255,172,13));
         }
         return componente;

@@ -30,9 +30,10 @@ public class Presentacion extends javax.swing.JDialog {
         
         modelo = new DefaultTableModel(null, new String[]{"N°","Presentación",""});
         tabla.setModel(modelo);
-        tabla.getColumnModel().getColumn(0).setMaxWidth(50);
-        tabla.getColumnModel().getColumn(2).setMaxWidth(0);
-        tabla.getColumnModel().getColumn(2).setMinWidth(0);
+        tabla.getColumnModel().getColumn(0).setMinWidth(60);
+        tabla.getColumnModel().getColumn(0).setMaxWidth(60);
+        tabla.getColumnModel().getColumn(2).setMinWidth(1);
+        tabla.getColumnModel().getColumn(2).setMaxWidth(1);
         productoController.mostrarPresentacion(modelo,"");
         
         tabla.setShowHorizontalLines(true);

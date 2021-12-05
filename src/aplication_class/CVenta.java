@@ -13,6 +13,13 @@ public class CVenta {
     private double monto;
     private double descuento;
     private double precioCompraUnitario;
+    //MÁS DETALLES
+    private String presentacion;
+    private String turno;
+    private String producto;
+    private String laboratorio;
+    private int cantidad;
+    
 
     public int getIdVenta() {
         return idVenta;
@@ -108,5 +115,45 @@ public class CVenta {
 
     public void setIdProductoFechav(int idProductoFechav) {
         this.idProductoFechav = idProductoFechav;
+    }
+
+    public String getPresentacion() {
+        return presentacion;
+    }
+
+    public void setPresentacion(String presentacion) {
+        this.presentacion = presentacion;
+    }
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
+
+    public String getProducto() {
+        return producto;
+    }
+
+    public void setProducto(String producto) {
+        this.producto = producto;
+    }
+
+    public String getLaboratorio() {
+        return laboratorio;
+    }
+
+    public void setLaboratorio(String laboratorio) {
+        this.laboratorio = laboratorio;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 }

@@ -1,5 +1,5 @@
 driver=com.mysql.jdbc.Driver
 url=jdbc:mysql://localhost
-dbname=botica_4
+dbname=vitalfarma
 dbuser=root
 password=

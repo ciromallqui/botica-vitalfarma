@@ -35,7 +35,7 @@ public class Devolucion extends javax.swing.JInternalFrame {
                 return false;
             }
         };
-        String titulo2[] = {"N°","Producto","Cantidad","Monto","Fecha devolución"};
+        String titulo2[] = {"N°","Producto","Cantidad","Monto","Fecha de devolución"};
         modelo2 = new DefaultTableModel(null,titulo2){
             @Override
             public boolean isCellEditable(int row, int column){
@@ -43,22 +43,28 @@ public class Devolucion extends javax.swing.JInternalFrame {
             }
         };
         tdevolucion1.setModel(modelo1);
+        tdevolucion1.getColumnModel().getColumn(0).setMinWidth(60);
         tdevolucion1.getColumnModel().getColumn(0).setMaxWidth(60);
-        tdevolucion1.getColumnModel().getColumn(1).setMaxWidth(70);
+        tdevolucion1.getColumnModel().getColumn(1).setMinWidth(0);
+        tdevolucion1.getColumnModel().getColumn(1).setMaxWidth(0);
         tdevolucion1.getColumnModel().getColumn(4).setMaxWidth(150);
         tdevolucion1.getColumnModel().getColumn(4).setMinWidth(150);
         tdevolucion1.getColumnModel().getColumn(5).setMaxWidth(120);
         tdevolucion1.getColumnModel().getColumn(5).setMinWidth(120);
         tdevolucion1.getColumnModel().getColumn(6).setMinWidth(100);
         tdevolucion1.getColumnModel().getColumn(6).setMaxWidth(100);
-        tdevolucion1.getColumnModel().getColumn(7).setMaxWidth(0);
+        tdevolucion1.getColumnModel().getColumn(7).setMinWidth(1);
+        tdevolucion1.getColumnModel().getColumn(7).setMaxWidth(1);
         
         tdevolucion2.setModel(modelo2);
+        tdevolucion2.getColumnModel().getColumn(0).setMinWidth(60);
         tdevolucion2.getColumnModel().getColumn(0).setMaxWidth(60);
-        tdevolucion2.getColumnModel().getColumn(2).setMaxWidth(80);
+        tdevolucion2.getColumnModel().getColumn(2).setMinWidth(100);
+        tdevolucion2.getColumnModel().getColumn(2).setMaxWidth(100);
+        tdevolucion2.getColumnModel().getColumn(3).setMinWidth(100);
         tdevolucion2.getColumnModel().getColumn(3).setMaxWidth(100);
-        tdevolucion2.getColumnModel().getColumn(4).setMinWidth(130);
-        tdevolucion2.getColumnModel().getColumn(4).setMaxWidth(140);
+        tdevolucion2.getColumnModel().getColumn(4).setMinWidth(150);
+        tdevolucion2.getColumnModel().getColumn(4).setMaxWidth(150);
         
         tdevolucion1.setShowHorizontalLines(true);
         tdevolucion1.setShowVerticalLines(false);

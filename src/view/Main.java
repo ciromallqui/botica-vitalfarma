@@ -54,9 +54,8 @@ public class Main extends javax.swing.JFrame {
     private void validarItemsAdmin(){
         try{
             if(!CUsuario.getTipoUsuario().equals("ADMINISTRADOR")){
-//                madministrador.setVisible(false);
                 mconfiguracion.setVisible(false);
-                mregistro.setEnabled(false);
+                mregistro.setVisible(false);
             }
         }catch(NullPointerException ex){}
     }
@@ -121,6 +120,7 @@ public class Main extends javax.swing.JFrame {
 
         minuevoControl.setBackground(new java.awt.Color(255, 102, 0));
         minuevoControl.setForeground(new java.awt.Color(255, 255, 255));
+        minuevoControl.setMnemonic('N');
         minuevoControl.setText("Nuevo Control                  Alt + N");
         minuevoControl.setContentAreaFilled(false);
         minuevoControl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -141,6 +141,7 @@ public class Main extends javax.swing.JFrame {
 
         minuevaVenta.setBackground(new java.awt.Color(255, 102, 0));
         minuevaVenta.setForeground(new java.awt.Color(255, 255, 255));
+        minuevaVenta.setMnemonic('V');
         minuevaVenta.setText("Nueva Venta                     Atl + V");
         minuevaVenta.setContentAreaFilled(false);
         minuevaVenta.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -221,6 +222,7 @@ public class Main extends javax.swing.JFrame {
 
         misalir.setBackground(new java.awt.Color(255, 102, 0));
         misalir.setForeground(new java.awt.Color(255, 255, 255));
+        misalir.setMnemonic('X');
         misalir.setText("Salir                                   Alt + X");
         misalir.setContentAreaFilled(false);
         misalir.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -428,7 +430,6 @@ public class Main extends javax.swing.JFrame {
         PANELCONFIG.setMinimumSize(new java.awt.Dimension(223, 167));
         PANELCONFIG.setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         PANELCONFIG.setUndecorated(true);
-        PANELCONFIG.setPreferredSize(new java.awt.Dimension(223, 167));
 
         jPanel5.setBackground(new java.awt.Color(255, 102, 0));
 
@@ -970,6 +971,7 @@ public class Main extends javax.swing.JFrame {
         madministrador.setBackground(new java.awt.Color(255,153,51));
         if(viewMenu){
             PANELADMIN.setLocation(this.getX()+205, this.getY()+marginTop);
+            PANELADMINV.setLocation(this.getX()+105, this.getY()+marginTop);
             PANELARCHIVO.setVisible(false);
             PANELREGISTRO.setVisible(false);
             PANELCONFIG.setVisible(false);
@@ -997,7 +999,7 @@ public class Main extends javax.swing.JFrame {
                 PANELADMINV.setVisible(false);
             }else{
                 viewMenu = true;
-                PANELADMINV.setLocation(this.getX()+205, this.getY()+marginTop);
+                PANELADMINV.setLocation(this.getX()+105, this.getY()+marginTop);
                 PANELADMINV.setVisible(true);
             }
         }else{
@@ -1397,6 +1399,7 @@ public class Main extends javax.swing.JFrame {
 
     private void micambioClaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_micambioClaveActionPerformed
         madministrador.setBackground(new java.awt.Color(255,102,0));
+        micambioClave.setBackground(new java.awt.Color(255,102,0));
         PANELADMINV.setVisible(false);
         viewMenu = false;
         

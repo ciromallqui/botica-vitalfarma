@@ -31,6 +31,7 @@ public class Conexion {
             re.setDbuser(mostrar.getProperty("dbuser"));
             re.setPassword(mostrar.getProperty("password"));
         } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "El sistema no puede encontrar el archivo de configuración de base de datos");
         }
     }
     
@@ -42,7 +43,7 @@ public class Conexion {
             con=DriverManager.getConnection(re.getUrl()+"/"+re.getDbname(), re.getDbuser(), re.getPassword());
         } catch (ClassNotFoundException | SQLException ex) {}
         if(con==null){
-            JOptionPane.showMessageDialog(null, "CONECCIÓN NO ESTABLESIDA");
+            JOptionPane.showMessageDialog(null, "CONECCIÓN A BASE DE DATOS NO ESTABLESIDA, \n  ASEGURESE DE QUE SU GESTOR ESTÉ ACTIVO");
             System.exit(0);
         }
         return con;
