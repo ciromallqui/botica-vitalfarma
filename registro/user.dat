@@ -1,0 +1,6 @@
+dbengine=postgres
+driver=org.postgresql.Driver
+url=jdbc:postgresql://localhost:5432
+dbname=vitalfarma3
+dbuser=postgres
+password=1234

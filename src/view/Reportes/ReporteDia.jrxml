@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteDia" pageWidth="700" pageHeight="842" columnWidth="680" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="a3b33f28-e4f3-47f4-b3d1-4c341ffc6eab">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="plogo" class="java.io.InputStream"/>
+	<parameter name="ptitulo" class="java.lang.String"/>
+	<field name="numeracion" class="java.lang.String"/>
+	<field name="producto" class="java.lang.String"/>
+	<field name="presentacion" class="java.lang.String"/>
+	<field name="cantidad" class="java.lang.String"/>
+	<field name="monto" class="java.lang.String"/>
+	<field name="hora" class="java.lang.String"/>
+	<field name="encargado" class="java.lang.String"/>
+	<field name="turno" class="java.lang.String"/>
+	<field name="laboratorio" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<image isUsingCache="true">
+				<reportElement x="2" y="2" width="64" height="64" uuid="0fc04c74-6f69-47fa-9e5c-0220f79f3890"/>
+				<imageExpression><![CDATA[$P{plogo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="76" y="2" width="584" height="64" uuid="7ecebd43-9a65-42a3-86e9-135dc7fd1fd3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ptitulo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="2" width="38" height="20" uuid="7dbbb021-745d-4777-9533-1710b1d91f4f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="2" width="131" height="20" uuid="4057c62f-330e-46b7-8a2d-df1d9ec3cff9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Producto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="2" width="99" height="20" uuid="04763485-3463-449e-b245-6059ff85d6e5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Presentación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="2" width="52" height="20" uuid="f42e267b-4e6e-46b6-969c-2f1276d9fb1e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="2" width="48" height="20" uuid="faf7f885-bbe0-4182-be82-0fab8f8beb2b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto S/.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="2" width="55" height="20" uuid="e70ba176-5be0-4a6c-b4a1-9d3128652d5e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora v.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="520" y="2" width="91" height="20" uuid="a104e7ee-7dbe-4763-a9a6-d96a81237574"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Encargado/a]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="611" y="2" width="69" height="20" uuid="0c9cdef6-a305-487b-98be-237acea20bd4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Turno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="2" width="95" height="20" uuid="4ef52849-5feb-414d-b14f-69e5f9f2bc3e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Laboratorio]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="678" height="1" forecolor="#666666" uuid="64bc7380-8b64-4cb6-8f0d-aaf3ceeb9043"/>
+			</line>
+			<textField>
+				<reportElement x="2" y="2" width="38" height="23" uuid="5f144f71-d04b-4403-bf0d-ac05b7668d77"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeracion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="139" y="2" width="131" height="23" uuid="acc06535-5713-44a2-bd48-b9e1a105df34"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="2" width="99" height="23" uuid="35d5d87c-e14f-4771-bb8c-c6857457d4c3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{presentacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="2" width="52" height="23" uuid="f252510d-b205-4758-b8ec-cc75dc12eb1e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="2" width="48" height="23" uuid="73ab928a-76a4-4e96-841f-5e89956d3ce3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="2" width="55" height="23" uuid="f30ea702-4322-4dda-8ede-e571e9786e35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="520" y="2" width="91" height="23" uuid="9b55e53e-247e-4915-af8a-4274bc1dc9c4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{encargado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="611" y="2" width="69" height="23" uuid="62583c58-42f3-44c1-97d4-864faef6bd42"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="2" width="95" height="23" uuid="3a18e6f8-55aa-4c2f-af61-8eb02f43b7cf"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{laboratorio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement positionType="Float" x="413" y="34" width="240" height="20" uuid="a6f04c92-b211-47aa-9605-08bbb98b9e0f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
